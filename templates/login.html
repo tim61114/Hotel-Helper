@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src = "popWindow.js"></script>
+    <title>Login</title>
+</head>
+
+<body>
+
+<form method="post" action="/login">
+    <h2>Login</h2>
+    <br>
+    Username
+    <label>
+        <input type="text" name="username">
+    </label><br>
+    Password
+    <label>
+        <input type="password" name="password">
+    </label><br>
+    <p><input type="submit" value="Log in"></p>
+</form>
+#if($!loginError)
+<p style="color:red;">$loginError</p>
+#end
+#if($!accountRegisterSuccess)
+<p style="color:green;">$accountRegisterSuccess</p>
+#end
+
+<form method="post" action="/register">
+    <h2>Register your account</h2><br>
+    Username
+    <label>
+        <input type="text" name="username">
+    </label><br>
+    Password
+    <label>
+        <input type="password" name="password">
+    </label><br>
+    <p><input type="submit" value="Submit"></p>
+</form>
+#if($!registerError)
+<p style="color:red;">$registerError</p>
+#end
+
+</body>
+</html>
