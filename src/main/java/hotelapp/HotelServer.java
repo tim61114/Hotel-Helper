@@ -1,6 +1,7 @@
 package hotelapp;
 
 import hotelapp.servlets.Home.HomeServlet;
+import hotelapp.servlets.Hotel.HotelServlet;
 import hotelapp.servlets.LoginAndRegistration.LoginServiceServlet;
 import hotelapp.servlets.LoginAndRegistration.LogoutServlet;
 import hotelapp.servlets.LoginAndRegistration.RegistrationServlet;
@@ -27,6 +28,7 @@ public class HotelServer {
 		handler.addServlet(LogoutServlet.class, "/logout");
 		handler.addServlet(RegistrationServlet.class, "/register");
 		handler.addServlet(SearchServlet.class, "/search");
+		handler.addServlet(HotelServlet.class, "/hotel");
 		server.setHandler(handler);
 
 

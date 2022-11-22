@@ -49,8 +49,10 @@ public class PreparedStatements {
         return "SELECT * FROM hotels WHERE hotel_name LIKE '%" + keyword + "%';";
     }
 
-
     public static final String GET_ALL_HOTELS =
             "SELECT * FROM hotels;";
+
+    public static final String GET_HOTEL_BY_ID =
+            "SELECT * FROM hotels WHERE id = ?";
 
 }

@@ -1,11 +1,13 @@
 package hotelapp.Database;
 
 import hotelapp.Database.DataPrep.LoadHotels;
+import hotelapp.Model.Hotel;
 import hotelapp.servlets.Home.HomeServlet;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class HotelDatabaseHandler {
     private final DatabaseHandler dbHandler = DatabaseHandler.getInstance();
@@ -63,9 +65,9 @@ public class HotelDatabaseHandler {
             if (query.equals("")) {
                 statement = dbConnection.prepareStatement(PreparedStatements.GET_ALL_HOTELS);
             } else {
-                statement = dbConnection.prepareStatement(PreparedStatements.getHotelByKeyword(query));
+                statement = dbConnection.prepareStatement(
+                        PreparedStatements.getHotelByKeyword(query.replaceAll("/+", " ")));
             }
-
 
             ResultSet result = statement.executeQuery();
             ResultSetMetaData metaData = result.getMetaData();
@@ -77,8 +79,15 @@ public class HotelDatabaseHandler {
                         continue;
                     }
                     sb.append("<td>");
-                    String columnValue = result.getString(i);
-                    sb.append(columnValue);
+                    if (i == 2) {
+                        sb.append("<a href=\"hotel?hotelId=")
+                                .append(result.getInt(1))
+                                .append("\">")
+                                .append(result.getString(i))
+                                .append("</a>");
+                    } else {
+                        sb.append(result.getString(i));
+                    }
                     sb.append("</td>");
                 }
                 sb.append("</tr>");
@@ -91,6 +100,39 @@ public class HotelDatabaseHandler {
             System.out.println(e.getMessage());
         }
         return queryResult;
+    }
+
+    public Optional<Hotel> getHotelById(int id) {
+        Connection dbConnection = dbHandler.getConnection();
+        if (dbConnection == null) {
+            System.out.println("Unable to connect to database.");
+            return Optional.empty();
+        }
+
+        try {
+            PreparedStatement statement = dbConnection.prepareStatement(PreparedStatements.GET_HOTEL_BY_ID);
+            statement.setInt(1, id);
+
+            ResultSet result = statement.executeQuery();
+
+            if (result.next()) {
+                return Optional.of(
+                        new Hotel(result.getString(2),
+                        result.getInt(3),
+                        result.getDouble(4),
+                        result.getDouble(5),
+                        result.getString(6),
+                        result.getString(7),
+                        result.getString(8),
+                        result.getString(9))
+                );
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getErrorCode());
+            System.out.println(e.getMessage());
+        }
+
+        return Optional.empty();
     }
 
 //    private void test() {
