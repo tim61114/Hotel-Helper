@@ -63,8 +63,7 @@ public class HotelDatabaseHandler {
             if (query.equals("")) {
                 statement = dbConnection.prepareStatement(PreparedStatements.GET_ALL_HOTELS);
             } else {
-                statement = dbConnection.prepareStatement(PreparedStatements.GET_HOTEL_BY_KEYWORD);
-                statement.setString(1, query);
+                statement = dbConnection.prepareStatement(PreparedStatements.getHotelByKeyword(query));
             }
 
 
@@ -119,6 +118,6 @@ public class HotelDatabaseHandler {
 //        hotelHandler.dropHotelTable();
 //        hotelHandler.createHotelTable();
 //        LoadHotels.LoadHotelsToDB("input/hotels/hotels.json");
-        hotelHandler.getProcessedHotels("");
+        hotelHandler.getProcessedHotels("san");
     }
 }

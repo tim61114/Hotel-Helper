@@ -19,12 +19,12 @@ public class PreparedStatements {
 
     /** Used to retrieve the salt associated with a specific user. */
     public static final String SALT_SQL =
-            "SELECT usersalt FROM users WHERE username = ?";
+            "SELECT usersalt FROM users WHERE username LIKE binary ?";
 
     /** Used to authenticate a user. */
     public static final String AUTH_SQL =
             "SELECT username FROM users " +
-                    "WHERE username = ? AND password = ?";
+                    "WHERE username LIKE binary ? AND password = ?";
 
     public static final String CREATE_HOTEL_TABLE =
             "CREATE TABLE hotels (" +
@@ -45,8 +45,10 @@ public class PreparedStatements {
             "INSERT INTO hotels (hotel_name, hotel_id, lat, lng, addr, city, state, country) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 
-    public static final String GET_HOTEL_BY_KEYWORD =
-            "SELECT * FROM hotels WHERE hotel_name LIKE '%?%';";
+    public static String getHotelByKeyword(String keyword) {
+        return "SELECT * FROM hotels WHERE hotel_name LIKE '%" + keyword + "%';";
+    }
+
 
     public static final String GET_ALL_HOTELS =
             "SELECT * FROM hotels;";

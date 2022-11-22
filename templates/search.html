@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search</title>
+</head>
+<body>
+<form method="get" action="/home">
+    <input type="submit" value="Home">
+</form>
+
+<p>Search result for <b>$keyword</b></p>
+<table>
+    <tr>
+        <td>Hotel</td>
+        <td>Address</td>
+        <td>City</td>
+        <td>State</td>
+        <td>Country</td>
+    </tr>
+    #foreach($hotel in $hotels)
+    $hotel
+    #end
+</table>
+#foreach($pagelink in $pages)
+$pagelink
+#end
+</body>
+</html>

@@ -4,6 +4,7 @@ import hotelapp.servlets.Home.HomeServlet;
 import hotelapp.servlets.LoginAndRegistration.LoginServiceServlet;
 import hotelapp.servlets.LoginAndRegistration.LogoutServlet;
 import hotelapp.servlets.LoginAndRegistration.RegistrationServlet;
+import hotelapp.servlets.Search.SearchServlet;
 import org.apache.velocity.app.VelocityEngine;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -25,6 +26,7 @@ public class HotelServer {
 		handler.addServlet(HomeServlet.class, "/home");
 		handler.addServlet(LogoutServlet.class, "/logout");
 		handler.addServlet(RegistrationServlet.class, "/register");
+		handler.addServlet(SearchServlet.class, "/search");
 		server.setHandler(handler);
 
 
