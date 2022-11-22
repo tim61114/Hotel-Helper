@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.Random;
 
 public class UserDatabaseHandler {
-    DatabaseHandler dbHandler = DatabaseHandler.getInstance();
+    private final DatabaseHandler dbHandler = DatabaseHandler.getInstance();
     private final Random random = new Random();
 
     public boolean createUserTable() {
@@ -98,6 +98,7 @@ public class UserDatabaseHandler {
             statement.setString(1, username);
             statement.setString(2, hashedPassword);
             ResultSet results = statement.executeQuery();
+
             return results.next();
         } catch (SQLException e) {
             System.out.println(e.getErrorCode());
