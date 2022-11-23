@@ -39,7 +39,7 @@ public class PreparedStatements {
                     "country VARCHAR(10));";
 
     public static final String DROP_HOTEL_TABLE =
-            "DROP TABLE hotels";
+            "DROP TABLE hotels;";
 
     public static final String ADD_HOTEL =
             "INSERT INTO hotels (hotel_name, hotel_id, lat, lng, addr, city, state, country) " +
@@ -53,6 +53,49 @@ public class PreparedStatements {
             "SELECT * FROM hotels;";
 
     public static final String GET_HOTEL_BY_ID =
-            "SELECT * FROM hotels WHERE id = ?";
+            "SELECT * FROM hotels WHERE id = ?;";
+
+    public static final String CREATE_REVIEW_TABLE =
+            "CREATE TABLE reviews (" +
+                    "id INTEGER AUTO_INCREMENT PRIMARY KEY, " +
+                    "review_id VARCHAR(32) NOT NULL UNIQUE, " +
+                    "hotel_id INTEGER NOT NULL , " +
+                    "title VARCHAR(60) NOT NULL, " +
+                    "reviewText TEXT NOT NULL, " +
+                    "userNickname VARCHAR(20), " +
+                    "reviewDate DATETIME, " +
+                    "rating INTEGER);";
+
+    public static final String DROP_REVIEW_TABLE =
+            "DROP TABLE reviews;";
+
+    public static final String ADD_REVIEW =
+            "INSERT INTO reviews (review_id, hotel_id, title, reviewText, userNickname, reviewDate, rating) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?);";
+
+    public static final String GET_REVIEW_BY_HOTEL_ID =
+            "SELECT * FROM reviews WHERE hotel_id = ? ORDER BY reviewDate DESC;";
+
+    public static final String CREATE_RATING_TABLE =
+            "CREATE TABLE ratings (" +
+                    "hotel_id INTEGER NOT NULL UNIQUE, " +
+                    "num_reviews INTEGER, " +
+                    "avg_rating DOUBLE, " +
+                    "cleanliness DOUBLE, " +
+                    "service DOUBLE, " +
+                    "room_comfort DOUBLE, " +
+                    "hotel_condition DOUBLE, " +
+                    "convenience DOUBLE, " +
+                    "neighborhood DOUBLE);";
+
+    public static final String DROP_RATING_TABLE =
+            "DROP TABLE ratings";
+
+    public static final String ADD_RATING =
+            "INSERT INTO ratings (hotel_id, num_reviews, avg_rating, cleanliness, service, room_comfort, hotel_condition, convenience, neighborhood) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    public static final String GET_RATING_BY_HOTEL_ID =
+            "SELECT * FROM ratings WHERE hotel_id = ?;";
 
 }

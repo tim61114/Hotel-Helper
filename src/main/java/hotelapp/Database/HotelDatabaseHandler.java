@@ -1,8 +1,6 @@
 package hotelapp.Database;
 
-import hotelapp.Database.DataPrep.LoadHotels;
 import hotelapp.Model.Hotel;
-import hotelapp.servlets.Home.HomeServlet;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -19,8 +17,8 @@ public class HotelDatabaseHandler {
             return false;
         }
         try {
-            Statement statement = dbConnection.createStatement();
-            statement.executeUpdate(PreparedStatements.CREATE_HOTEL_TABLE);
+            PreparedStatement statement = dbConnection.prepareStatement(PreparedStatements.CREATE_HOTEL_TABLE);
+            statement.executeUpdate();
         } catch (SQLException e) {
             if (e.getErrorCode() == DatabaseErrorCodes.TABLE_EXISTS) {
                 System.out.println("User table already exists.");
@@ -39,11 +37,11 @@ public class HotelDatabaseHandler {
             return false;
         }
         try {
-            Statement statement = dbConnection.createStatement();
-            statement.executeUpdate(PreparedStatements.DROP_HOTEL_TABLE);
+            PreparedStatement statement = dbConnection.prepareStatement(PreparedStatements.DROP_HOTEL_TABLE);
+            statement.executeUpdate();
         } catch (SQLException e) {
             if (e.getErrorCode() == DatabaseErrorCodes.TABLE_DOES_NOT_EXIST) {
-                System.out.println("Table hotels does not exist. Aborted.");
+                System.out.println("Table hotels does not exist.");
             } else {
                 System.out.println("An error occurred.");
             }

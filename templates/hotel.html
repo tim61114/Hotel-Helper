@@ -9,6 +9,43 @@
 
 <p>Hotel Address: $addr, $city, $state</p>
 
+<table style="width:100%">
+    <tr>
+        <td style="width:25%">Number of Reviews: $numReviews</td>
+        <td style="width:25%">Average Rating: $avgRating /5</td>
+        <td style="width:25%">Cleanliness: $cleanliness /5</td>
+        <td style="width:25%">Service: $service /5</td>
+    </tr>
+    <tr>
+        <td style="width:25%">Room Comfort: $roomComfort /5</td>
+        <td style="width:25%">Hotel Condition: $hotelCondition /5</td>
+        <td style="width:25%">Convenience: $convenience /5</td>
+        <td style="width:25%">Neighborhood: $neighborhood /5</td>
+    </tr>
+</table>
+
+<br>
+<form method="post" action="/review" id="reviewForm">
+    Title:
+    <label>
+        <input type="text" name="title" size="24">
+    </label>
+    Rating:
+    <label>
+        <input type="text" name="rating" maxlength="1" size="2">
+    </label>
+    <label><input type="submit"></label>
+</form>
+<textarea rows="4" cols="50" name="comment" form="reviewForm">
+Your comments here</textarea>
+
+
+<br>
+<table>
+#foreach($review in $reviews)
+    $review
+#end
+</table>
 
 </body>
 </html>
