@@ -21,7 +21,6 @@ public class LoginServiceServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         HttpSession session = request.getSession();
         if (session.getAttribute("loginInfo") != null) {
-            //session.setAttribute("loginInfo", null);
             response.sendRedirect("/home");
         }
         response.setContentType("text/html");
@@ -34,6 +33,7 @@ public class LoginServiceServlet extends HttpServlet {
         switch (errorCode) {
             case LoginStatusCodes.LOGIN_FAILED -> context.put("loginError", "Login failed, please check your username/password.");
             case LoginStatusCodes.REGISTRATION_FAILED -> context.put("registerError", "Unable to register your account, try again.");
+            case LoginStatusCodes.PASSWORD_TOO_EASY -> context.put("registerError", "Password should contain alphabets, digits and a length over 8.");
             case LoginStatusCodes.ACCOUNT_CREATED -> context.put("accountRegisterSuccess", "Please login with your account.");
         }
         session.setAttribute("status", LoginStatusCodes.SUCCESS);
