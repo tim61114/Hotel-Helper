@@ -79,7 +79,7 @@ public class HotelDatabaseHandler {
                     sb.append("<td>");
                     if (i == 2) {
                         sb.append("<a href=\"hotel?hotelId=")
-                                .append(result.getInt(1))
+                                .append(result.getInt(3))
                                 .append("\">")
                                 .append(result.getString(i))
                                 .append("</a>");
@@ -100,7 +100,7 @@ public class HotelDatabaseHandler {
         return queryResult;
     }
 
-    public Optional<Hotel> getHotelById(int id) {
+    public Optional<Hotel> getHotelById(int hotelId) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
             System.out.println("Unable to connect to database.");
@@ -109,7 +109,7 @@ public class HotelDatabaseHandler {
 
         try {
             PreparedStatement statement = dbConnection.prepareStatement(PreparedStatements.GET_HOTEL_BY_ID);
-            statement.setInt(1, id);
+            statement.setInt(1, hotelId);
 
             ResultSet result = statement.executeQuery();
 

@@ -5,6 +5,11 @@
     <title>Hotel</title>
 </head>
 <body>
+
+<form method="get" action="/home">
+    <input type="submit" value="Home">
+</form>
+
 <h3>$name</h3>
 
 <p>Hotel Address: $addr, $city, $state</p>
@@ -37,9 +42,12 @@
     <label><input type="submit"></label>
 </form>
 <textarea rows="4" cols="50" name="comment" form="reviewForm">
-Your comments here</textarea>
+$comments</textarea>
+#if($!RatingError)
+<p style="color:red;">$RatingError</p>
+#end
 
-
+<h3>Reviews </h3>
 <br>
 <table>
 #foreach($review in $reviews)

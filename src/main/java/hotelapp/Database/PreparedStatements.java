@@ -53,7 +53,7 @@ public class PreparedStatements {
             "SELECT * FROM hotels;";
 
     public static final String GET_HOTEL_BY_ID =
-            "SELECT * FROM hotels WHERE id = ?;";
+            "SELECT * FROM hotels WHERE hotel_id = ?;";
 
     public static final String CREATE_REVIEW_TABLE =
             "CREATE TABLE reviews (" +
@@ -73,8 +73,14 @@ public class PreparedStatements {
             "INSERT INTO reviews (review_id, hotel_id, title, reviewText, userNickname, reviewDate, rating) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?);";
 
+    public static final String DELETE_REVIEW_BY_REVIEW_ID =
+            "DELETE FROM reviews WHERE review_id = ?";
+
     public static final String GET_REVIEW_BY_HOTEL_ID =
             "SELECT * FROM reviews WHERE hotel_id = ? ORDER BY reviewDate DESC;";
+
+    public static final String GET_REVIEW_BY_REVIEW_ID =
+            "SELECT * FROM reviews WHERE review_id = ?;";
 
     public static final String CREATE_RATING_TABLE =
             "CREATE TABLE ratings (" +

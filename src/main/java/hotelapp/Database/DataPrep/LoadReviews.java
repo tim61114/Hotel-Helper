@@ -13,11 +13,9 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
@@ -81,7 +79,7 @@ public class LoadReviews {
             String title = currentUserReview.get("title") != null ? currentUserReview.get("title").getAsString() : "";
             String reviewText = currentUserReview.get("reviewText") != null ? currentUserReview.get("reviewText").getAsString() : "";
             String userNickname = currentUserReview.get("userNickname") != null ? currentUserReview.get("userNickname").getAsString() : "Anonymous";
-            LocalDate reviewDate = LocalDate.parse(currentUserReview.get("reviewSubmissionTime").getAsString().substring(0, 10));
+            LocalDateTime reviewDate = LocalDateTime.parse(currentUserReview.get("reviewSubmissionTime").getAsString().substring(0, 19));
             int ratingOverall = currentUserReview.get("ratingOverall").getAsInt();
 
             PreparedStatement statement = dbConnection.prepareStatement(PreparedStatements.ADD_REVIEW);
@@ -90,7 +88,7 @@ public class LoadReviews {
             statement.setString(3, title);
             statement.setString(4, reviewText);
             statement.setString(5, userNickname);
-            statement.setDate(6, Date.valueOf(reviewDate));
+            statement.setTimestamp(6, Timestamp.valueOf(reviewDate));
             statement.setInt(7, ratingOverall);
             statement.executeUpdate();
             statement.close();
