@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class HotelServlet extends HttpServlet {
 
@@ -27,17 +26,12 @@ public class HotelServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         HttpSession session = request.getSession();
-        JsonObject userJson = (JsonObject) session.getAttribute("loginInfo");
-        if (userJson == null) {
-            response.sendRedirect("/login");
+        if (redirectHandler(request, response)) {
             return;
         }
 
         String hotelId = request.getParameter("hotelId");
-        if (hotelId == null) {
-            response.sendRedirect("/home");
-            return;
-        }
+
         Hotel hotel;
         try {
             hotel = hotelHandler.getHotelById(Integer.parseInt(hotelId))
@@ -48,27 +42,25 @@ public class HotelServlet extends HttpServlet {
         }
 
         session.setAttribute("currentHotel", hotelId);
-        boolean commentError = session.getAttribute("ratingError") != null;
+
+        boolean ratingError = session.getAttribute("ratingError") != null;
         session.removeAttribute("ratingError");
 
-        String editReviewId = (String) session.getAttribute("EditReview");
-        Review review = null;
-        if (editReviewId != null) {
-            review = reviewHandler.getReviewByReviewId(editReviewId);
-        }
+        Review reviewToBeEdited = getReviewToBeEdited(session);
 
         Rating rating = reviewHandler.getRatingByHotelId(hotel.hotelId())
                 .orElse(new Rating(0, 0,0,0,0,0,0,0));
 
+        String username = ((JsonObject) session.getAttribute("loginInfo")).get("username").getAsString();
         List<Review> reviews = reviewHandler.getProcessedReviewsByHotelId(hotel.hotelId());
-        List<String> parsedReviews = processReviews(reviews, userJson.get("username").getAsString(), editReviewId != null);
+        List<String> parsedReviews = processReviews(reviews, username, reviewToBeEdited != null);
 
         PrintWriter out = response.getWriter();
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
 
         VelocityEngine v = (VelocityEngine) request.getServletContext().getAttribute("templateEngine");
-        VelocityContext context = fillContext(hotel, rating, parsedReviews, commentError, review);
+        VelocityContext context = contextHandler(hotel, rating, parsedReviews, ratingError, reviewToBeEdited);
 
         Template template = v.getTemplate("templates/hotel.html");
 
@@ -79,21 +71,29 @@ public class HotelServlet extends HttpServlet {
 
     }
 
-    private VelocityContext fillContext(Hotel hotel, Rating rating, List<String> reviews, boolean ratingError, Review review) {
+    private boolean redirectHandler(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession session = request.getSession();
+        JsonObject userJson = (JsonObject) session.getAttribute("loginInfo");
+        if (userJson == null) {
+            response.sendRedirect("/login");
+            return true;
+        }
+
+        String hotelId = request.getParameter("hotelId");
+        if (hotelId == null) {
+            response.sendRedirect("/home");
+            return true;
+        }
+
+        return false;
+    }
+
+    private VelocityContext contextHandler(Hotel hotel, Rating rating, List<String> reviews, boolean ratingError, Review review) {
         VelocityContext context = new VelocityContext();
-        context.put("numReviews", rating.numReviews());
-        context.put("avgRating", rating.avgRating());
-        context.put("cleanliness", rating.cleanliness());
-        context.put("service", rating.service());
-        context.put("roomComfort", rating.roomComfort());
-        context.put("hotelCondition", rating.hotelCondition());
-        context.put("convenience", rating.convenience());
-        context.put("neighborhood", rating.neighborhood());
-        context.put("name", hotel.name());
-        context.put("addr", hotel.addr());
-        context.put("city", hotel.city());
-        context.put("state", hotel.state());
+        context.put("rating", rating);
+        context.put("hotel", hotel);
         context.put("reviews", reviews);
+        context.put("Expedia", "<a href=\"https://www.expedia.com/h" + hotel.hotelId() + ".Hotel-Information\" target=\"_blank\">Expedia</a>");
         if (ratingError) {
             context.put("RatingError", "Rating should be a number between 0 to 5");
         }
@@ -132,5 +132,14 @@ public class HotelServlet extends HttpServlet {
                 }
         )
                 .toList();
+    }
+
+    private Review getReviewToBeEdited(HttpSession session) {
+        String editReviewId = (String) session.getAttribute("EditReview");
+        Review review = null;
+        if (editReviewId != null) {
+            review = reviewHandler.getReviewByReviewId(editReviewId);
+        }
+        return review;
     }
 }

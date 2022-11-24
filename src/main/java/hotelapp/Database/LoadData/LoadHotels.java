@@ -1,4 +1,4 @@
-package hotelapp.Database.DataPrep;
+package hotelapp.Database.LoadData;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

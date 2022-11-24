@@ -12,8 +12,7 @@ public class LogoutServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html");
         HttpSession session = request.getSession();
-
-        session.setAttribute("loginInfo", null);
+        session.removeAttribute("loginInfo");
         response.sendRedirect("/login");
     }
 }

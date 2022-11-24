@@ -1,4 +1,4 @@
-package hotelapp.Database.DataPrep;
+package hotelapp.Database.LoadData;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -14,7 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayDeque;
 import java.util.Queue;

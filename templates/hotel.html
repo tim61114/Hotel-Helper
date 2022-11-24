@@ -10,22 +10,21 @@
     <input type="submit" value="Home">
 </form>
 
-<h3>$name</h3>
-
-<p>Hotel Address: $addr, $city, $state</p>
+<h3>$hotel.name()</h3>
+<p>Hotel Address: $hotel.addr(), $hotel.city(), $hotel.state()  $Expedia</p>
 
 <table style="width:100%">
     <tr>
-        <td style="width:25%">Number of Reviews: $numReviews</td>
-        <td style="width:25%">Average Rating: $avgRating /5</td>
-        <td style="width:25%">Cleanliness: $cleanliness /5</td>
-        <td style="width:25%">Service: $service /5</td>
+        <td style="width:25%">Number of Reviews: $rating.numReviews()</td>
+        <td style="width:25%">Average Rating: $rating.avgRating() /5</td>
+        <td style="width:25%">Cleanliness: $rating.cleanliness() /5</td>
+        <td style="width:25%">Service: $rating.service() /5</td>
     </tr>
     <tr>
-        <td style="width:25%">Room Comfort: $roomComfort /5</td>
-        <td style="width:25%">Hotel Condition: $hotelCondition /5</td>
-        <td style="width:25%">Convenience: $convenience /5</td>
-        <td style="width:25%">Neighborhood: $neighborhood /5</td>
+        <td style="width:25%">Room Comfort: $rating.roomComfort() /5</td>
+        <td style="width:25%">Hotel Condition: $rating.hotelCondition() /5</td>
+        <td style="width:25%">Convenience: $rating.convenience() /5</td>
+        <td style="width:25%">Neighborhood: $rating.neighborhood() /5</td>
     </tr>
 </table>
 

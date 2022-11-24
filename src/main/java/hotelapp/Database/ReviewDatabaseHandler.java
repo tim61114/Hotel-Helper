@@ -1,13 +1,12 @@
 package hotelapp.Database;
 
-import hotelapp.Database.DataPrep.LoadReviews;
+import hotelapp.Database.LoadData.LoadReviews;
 import hotelapp.Model.Rating;
 import hotelapp.Model.Review;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.sql.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

@@ -36,6 +36,7 @@ public class LoginServiceServlet extends HttpServlet {
             case LoginStatusCodes.PASSWORD_TOO_EASY -> context.put("registerError", "Password should contain alphabets, digits and a length over 8.");
             case LoginStatusCodes.ACCOUNT_CREATED -> context.put("accountRegisterSuccess", "Please login with your account.");
         }
+
         session.setAttribute("status", LoginStatusCodes.SUCCESS);
 
         StringWriter writer = new StringWriter();
