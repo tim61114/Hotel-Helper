@@ -77,7 +77,7 @@ public class LoadReviews {
             int hotelId = currentUserReview.get("hotelId").getAsInt();
             String title = currentUserReview.get("title") != null ? currentUserReview.get("title").getAsString() : "";
             String reviewText = currentUserReview.get("reviewText") != null ? currentUserReview.get("reviewText").getAsString() : "";
-            String userNickname = currentUserReview.get("userNickname") != null ? currentUserReview.get("userNickname").getAsString() : "Anonymous";
+            String userNickname = currentUserReview.get("userNickname").getAsString().equals("") ? "Anonymous" : currentUserReview.get("userNickname").getAsString();
             LocalDateTime reviewDate = LocalDateTime.parse(currentUserReview.get("reviewSubmissionTime").getAsString().substring(0, 19));
             int ratingOverall = currentUserReview.get("ratingOverall").getAsInt();
 

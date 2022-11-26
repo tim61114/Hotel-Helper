@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Hotel</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 <body>
 
@@ -10,23 +11,48 @@
     <input type="submit" value="Home">
 </form>
 
+<form>
+    <tr>
+        <td>
+            <label for="start">Start date:
+                <input type="date" id="start" name="startDate" min="2022-11-20" max="2023-02-28"/>
+            </label>
+        </td>
+        <td>
+            <label for="end">End date:
+                <input type="date" id="end" name="endDate" min="2022-11-20" max="2023-02-28"/>
+            </label>
+        </td>
+        <td>
+            <form method="get" action="/book">
+                <input type="submit" value="Check Availability">
+            </form>
+        </td>
+    </tr>
+</form>
+#if($!DateError)
+<p style="color:red;">$DateError</p>
+#end
+
 <h3>$hotel.name()</h3>
 <p>Hotel Address: $hotel.addr(), $hotel.city(), $hotel.state()  $Expedia</p>
 
-<table style="width:100%">
-    <tr>
-        <td style="width:25%">Number of Reviews: $rating.numReviews()</td>
-        <td style="width:25%">Average Rating: $rating.avgRating() /5</td>
-        <td style="width:25%">Cleanliness: $rating.cleanliness() /5</td>
-        <td style="width:25%">Service: $rating.service() /5</td>
-    </tr>
-    <tr>
-        <td style="width:25%">Room Comfort: $rating.roomComfort() /5</td>
-        <td style="width:25%">Hotel Condition: $rating.hotelCondition() /5</td>
-        <td style="width:25%">Convenience: $rating.convenience() /5</td>
-        <td style="width:25%">Neighborhood: $rating.neighborhood() /5</td>
-    </tr>
-</table>
+<!--<table style="width:100%" class="table">-->
+<!--    <tr>-->
+<!--        <td style="width:25%">Number of Reviews: $rating.numReviews()</td>-->
+<!--        <td style="width:25%">Average Rating: $rating.avgRating() /5</td>-->
+<!--        <td style="width:25%">Cleanliness: $rating.cleanliness() /5</td>-->
+<!--        <td style="width:25%">Service: $rating.service() /5</td>-->
+<!--    </tr>-->
+<!--    <tr>-->
+<!--        <td style="width:25%">Room Comfort: $rating.roomComfort() /5</td>-->
+<!--        <td style="width:25%">Hotel Condition: $rating.hotelCondition() /5</td>-->
+<!--        <td style="width:25%">Convenience: $rating.convenience() /5</td>-->
+<!--        <td style="width:25%">Neighborhood: $rating.neighborhood() /5</td>-->
+<!--    </tr>-->
+<!--</table>-->
+
+<p class="-summary">Average Rating: $avgRating</p>
 
 <br>
 <form method="post" action="/review" id="reviewForm">
@@ -48,7 +74,7 @@ $comments</textarea>
 
 <h3>Reviews </h3>
 <br>
-<table>
+<table class="table">
 #foreach($review in $reviews)
     $review
 #end

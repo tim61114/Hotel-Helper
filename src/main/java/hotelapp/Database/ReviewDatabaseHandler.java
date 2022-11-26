@@ -203,6 +203,29 @@ public class ReviewDatabaseHandler {
         return null;
     }
 
+    public double getAverageRatingByHotelId(int hotelId) {
+        Connection dbConnection = dbHandler.getConnection();
+        if (dbConnection == null) {
+            System.out.println("Unable to connect to database.");
+            return 0d;
+        }
+        try {
+            PreparedStatement statement = dbConnection.prepareStatement(PreparedStatements.GET_AVERAGE_RATING_BY_HOTEL_ID);
+            statement.setInt(1, hotelId);
+
+            ResultSet result = statement.executeQuery();
+
+            if (result.next()) {
+                return result.getDouble(1);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getErrorCode());
+            System.out.println(e.getMessage());
+        }
+        return 0d;
+
+    }
+
     private String getReviewId(String username, int hotelId, LocalDateTime reviewDate) {
         String target = username + hotelId + reviewDate.toString();
         String hashed = null;

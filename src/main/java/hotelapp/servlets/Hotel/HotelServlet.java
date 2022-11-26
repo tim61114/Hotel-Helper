@@ -55,12 +55,14 @@ public class HotelServlet extends HttpServlet {
         List<Review> reviews = reviewHandler.getProcessedReviewsByHotelId(hotel.hotelId());
         List<String> parsedReviews = processReviews(reviews, username, reviewToBeEdited != null);
 
+        double averageRating = reviewHandler.getAverageRatingByHotelId(hotel.hotelId());
+
         PrintWriter out = response.getWriter();
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
 
         VelocityEngine v = (VelocityEngine) request.getServletContext().getAttribute("templateEngine");
-        VelocityContext context = contextHandler(hotel, rating, parsedReviews, ratingError, reviewToBeEdited);
+        VelocityContext context = contextHandler(hotel, averageRating, rating, parsedReviews, ratingError, reviewToBeEdited);
 
         Template template = v.getTemplate("templates/hotel.html");
 
@@ -88,11 +90,12 @@ public class HotelServlet extends HttpServlet {
         return false;
     }
 
-    private VelocityContext contextHandler(Hotel hotel, Rating rating, List<String> reviews, boolean ratingError, Review review) {
+    private VelocityContext contextHandler(Hotel hotel, double averageRating, Rating rating, List<String> reviews, boolean ratingError, Review review) {
         VelocityContext context = new VelocityContext();
         context.put("rating", rating);
         context.put("hotel", hotel);
         context.put("reviews", reviews);
+        context.put("avgRating", averageRating);
         context.put("Expedia", "<a href=\"https://www.expedia.com/h" + hotel.hotelId() + ".Hotel-Information\" target=\"_blank\">Expedia</a>");
         if (ratingError) {
             context.put("RatingError", "Rating should be a number between 0 to 5");

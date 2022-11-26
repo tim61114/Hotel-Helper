@@ -82,6 +82,9 @@ public class PreparedStatements {
     public static final String GET_REVIEW_BY_REVIEW_ID =
             "SELECT * FROM reviews WHERE review_id = ?;";
 
+    public static final String GET_AVERAGE_RATING_BY_HOTEL_ID =
+            "SELECT AVG(rating) FROM reviews WHERE hotel_id = ?;";
+
     public static final String CREATE_RATING_TABLE =
             "CREATE TABLE ratings (" +
                     "hotel_id INTEGER NOT NULL UNIQUE, " +

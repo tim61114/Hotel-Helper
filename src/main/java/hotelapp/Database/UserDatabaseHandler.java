@@ -1,5 +1,6 @@
 package hotelapp.Database;
 
+import javax.xml.crypto.Data;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.sql.*;
@@ -50,7 +51,7 @@ public class UserDatabaseHandler {
         return true;
     }
 
-    public boolean registerUser(String username, String password) {
+    public int registerUser(String username, String password) {
         byte[] saltBytes = new byte[16];
         random.nextBytes(saltBytes);
 
@@ -59,7 +60,7 @@ public class UserDatabaseHandler {
 
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
-            return false;
+            return DatabaseErrorCodes.CANNOT_CONNECT_TO_SQL_SERVER;
         }
 
         try {
@@ -72,12 +73,13 @@ public class UserDatabaseHandler {
         } catch (SQLException e) {
             if (e.getErrorCode() == DatabaseErrorCodes.USER_EXISTS) {
                 System.out.println("User already exists");
+                return DatabaseErrorCodes.USER_EXISTS;
             } else {
                 System.out.println("Unable to create user.");
+                return DatabaseErrorCodes.UNSTATED_ERROR;
             }
-            return false;
         }
-        return true;
+        return DatabaseErrorCodes.SUCCESS;
     }
 
     public boolean authenticateUser(String username, String password) {
