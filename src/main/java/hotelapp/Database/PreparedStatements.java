@@ -55,6 +55,9 @@ public class PreparedStatements {
     public static final String GET_HOTEL_BY_ID =
             "SELECT * FROM hotels WHERE hotel_id = ?;";
 
+    public static final String GET_ALL_HOTEL_ID =
+            "SELECT hotel_id FROM hotels;";
+
     public static final String CREATE_REVIEW_TABLE =
             "CREATE TABLE reviews (" +
                     "id INTEGER AUTO_INCREMENT PRIMARY KEY, " +
@@ -106,5 +109,36 @@ public class PreparedStatements {
 
     public static final String GET_RATING_BY_HOTEL_ID =
             "SELECT * FROM ratings WHERE hotel_id = ?;";
+
+    public static final String CREATE_BOOKING_TABLE =
+            "CREATE TABLE bookings (" +
+                    "id INTEGER AUTO_INCREMENT PRIMARY KEY, " +
+                    "booking_id VARCHAR(32) NOT NULL UNIQUE, " +
+                    "hotel_id INTEGER NOT NULL , " +
+                    "startDate DATE NOT NULL, " +
+                    "endDate DATE NOT NULL, " +
+                    "numRooms INTEGER NOT NULL, " +
+                    "username VARCHAR(20) NOT NULL, " +
+                    "timeBooked TIMESTAMP NOT NULL);";
+
+    public static final String DROP_BOOKING_TABLE =
+            "DROP TABLE bookings";
+
+    public static final String ADD_BOOKING =
+            "INSERT INTO bookings (booking_id, hotel_id, startDate, endDate, numRooms, username, timeBooked) " +
+                    "VALUES(?, ?, ?, ?, ?, ?, ?)";
+
+    public static final String GET_ALL_BOOKING =
+            "SELECT * FROM bookings;";
+
+    public static final String GET_USER_BOOKING =
+            "SELECT * FROM bookings WHERE username = ?";
+
+    public static final String GET_BOOKING_BY_HOTEL_ID =
+            "SELECT * FROM bookings WHERE hotel_id = ?";
+
+    public static final String DELETE_BOOKING =
+            "DELETE FROM bookings WHERE booking_id = ?";
+
 
 }

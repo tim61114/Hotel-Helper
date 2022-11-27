@@ -41,6 +41,8 @@ public class HotelServlet extends HttpServlet {
             return;
         }
 
+        String bookingStatus = (String) session.getAttribute("BookingStatus");
+
         session.setAttribute("currentHotel", hotelId);
 
         boolean ratingError = session.getAttribute("ratingError") != null;
@@ -62,7 +64,7 @@ public class HotelServlet extends HttpServlet {
         response.setStatus(HttpServletResponse.SC_OK);
 
         VelocityEngine v = (VelocityEngine) request.getServletContext().getAttribute("templateEngine");
-        VelocityContext context = contextHandler(hotel, averageRating, rating, parsedReviews, ratingError, reviewToBeEdited);
+        VelocityContext context = contextHandler(hotel, averageRating, rating, parsedReviews, ratingError, reviewToBeEdited, bookingStatus);
 
         Template template = v.getTemplate("templates/hotel.html");
 
@@ -90,7 +92,8 @@ public class HotelServlet extends HttpServlet {
         return false;
     }
 
-    private VelocityContext contextHandler(Hotel hotel, double averageRating, Rating rating, List<String> reviews, boolean ratingError, Review review) {
+    private VelocityContext contextHandler(Hotel hotel, double averageRating, Rating rating, List<String> reviews,
+                                           boolean ratingError, Review review, String bookingStatus) {
         VelocityContext context = new VelocityContext();
         context.put("rating", rating);
         context.put("hotel", hotel);
@@ -105,6 +108,15 @@ public class HotelServlet extends HttpServlet {
             context.put("comments", review.reviewText());
         } else {
             context.put("comments", "Your comments here");
+        }
+
+        if (bookingStatus != null) {
+            switch (Integer.parseInt(bookingStatus)) {
+                case 0 -> context.put("BookingSuccess", "Booking Success!");
+                case 1 -> context.put("BookingError", "Rooms are not fully available in the time being.");
+                case 2 -> context.put("BookingError", "Start date should be not later than end date.");
+                case 3 -> context.put("BookingError", "Too many rooms. (We only have at most three rooms available)");
+            }
         }
 
         return context;

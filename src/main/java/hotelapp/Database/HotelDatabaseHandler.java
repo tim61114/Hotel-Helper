@@ -50,6 +50,28 @@ public class HotelDatabaseHandler {
         return true;
     }
 
+    public List<Integer> getHotelIdList() {
+        Connection dbConnection = dbHandler.getConnection();
+        if (dbConnection == null) {
+            System.out.println("Unable to connect to database.");
+            return new ArrayList<>();
+        }
+
+        List<Integer> idList = new ArrayList<>();
+        try {
+            PreparedStatement statement;
+            statement = dbConnection.prepareStatement(PreparedStatements.GET_ALL_HOTEL_ID);
+            ResultSet result = statement.executeQuery();
+            while (result.next()) {
+                idList.add(result.getInt(1));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getErrorCode());
+            System.out.println(e.getMessage());
+        }
+        return idList;
+    }
+
     public List<String> getProcessedHotels(String query) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {

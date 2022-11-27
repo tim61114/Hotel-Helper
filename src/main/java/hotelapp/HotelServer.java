@@ -1,5 +1,6 @@
 package hotelapp;
 
+import hotelapp.servlets.Booking.BookingServlet;
 import hotelapp.servlets.Home.HomeServlet;
 import hotelapp.servlets.Hotel.HotelServlet;
 import hotelapp.servlets.LoginAndRegistration.LoginServiceServlet;
@@ -19,7 +20,17 @@ public class HotelServer {
 
 	public static void main(String[] args) throws Exception {
 		Server server = new Server(PORT);
+		init(server);
 
+		try {
+			server.start();
+			server.join();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+	}
+
+	private static void init(Server server) {
 		ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS);
 
 		VelocityEngine velocity = new VelocityEngine();
@@ -35,14 +46,8 @@ public class HotelServer {
 		handler.addServlet(AddReviewServlet.class, "/review");
 		handler.addServlet(EditReviewServlet.class, "/edit");
 		handler.addServlet(DeleteReviewServlet.class, "/delete");
+		handler.addServlet(BookingServlet.class, "/booking");
+
 		server.setHandler(handler);
-
-
-		try {
-			server.start();
-			server.join();
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-		}
 	}
 }
