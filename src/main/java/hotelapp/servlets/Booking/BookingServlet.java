@@ -17,6 +17,8 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.math.BigInteger;
+import java.security.MessageDigest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,7 +27,7 @@ import java.util.List;
 
 public class BookingServlet extends HttpServlet {
 
-    HashMap<Integer, HashMap<LocalDate, Integer>> hotelDateMap = initMap();
+    static HashMap<Integer, HashMap<LocalDate, Integer>> hotelDateMap = initMap();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -49,6 +51,14 @@ public class BookingServlet extends HttpServlet {
 
         VelocityContext context = new VelocityContext();
         StringWriter writer = new StringWriter();
+        String removeStatus = (String) session.getAttribute("removeStatus");
+        if (removeStatus!= null) {
+            switch (removeStatus){
+                case "0" -> context.put("removeBookingSuccess", "Successfully unbooked.");
+                case "1" -> context.put("removeBookingError", "Unable to unbook, try again.");
+            }
+            session.removeAttribute("removeStatus");
+        }
         context.put("bookings", formattedBookingList);
         context.put("username", userJson.get("username").getAsString());
         template.merge(context, writer);
@@ -70,15 +80,26 @@ public class BookingServlet extends HttpServlet {
         if ((error = isValidBooking(hotelId, startDate, endDate, numRooms)) != 0) {
             session.setAttribute("BookingStatus", "" + error);
         } else {
-            createBooking(new Booking(hotelId, startDate, endDate, numRooms, username, LocalDateTime.now()));
+            createBooking(hotelId, startDate, endDate, numRooms, username, LocalDateTime.now());
             session.setAttribute("BookingStatus", "0");
         }
         response.sendRedirect("/hotel?hotelId=" + hotelId);
 
     }
 
+
+    public static void removeFromMap(Booking booking) {
+        HashMap<LocalDate, Integer> curMap = hotelDateMap.get(booking.hotelId());
+        LocalDate start = booking.startDate(), end = booking.endDate();
+        while (start.isBefore(end.plusDays(1))) {
+            curMap.put(start, curMap.get(start) - booking.numRooms());
+            start = start.plusDays(1);
+        }
+    }
+
     private List<String> getFormattedBookingList(List<Booking> bookingList) {
         HotelDatabaseHandler hotelHandler = new HotelDatabaseHandler();
+        BookingDatabaseHandler bookingHandler = new BookingDatabaseHandler();
         List<String> formattedList = new ArrayList<>();
         bookingList.forEach(booking -> {
             Hotel curHotel = hotelHandler.getHotelById(booking.hotelId()).get();
@@ -87,13 +108,14 @@ public class BookingServlet extends HttpServlet {
                     "<td>" + booking.startDate() + "</td>" +
                     "<td>" + booking.endDate() + "</td>" +
                     "<td>" + booking.numRooms() + "</td>" +
-                    "<td>" + booking.timeBooked() + "</td></tr>";
+                    "<td>" + booking.timeBooked() + "</td>" +
+                    "<td>" + "<form method=\"post\" action=\"/delete_booking?booking_id=" + booking.bookingId() + "\"><input type=\"submit\" value=\"Remove\"></form></td></tr>";
             formattedList.add(str);
         });
         return formattedList;
     }
 
-    private HashMap<Integer, HashMap<LocalDate, Integer>> initMap() {
+    private static HashMap<Integer, HashMap<LocalDate, Integer>> initMap() {
         HashMap<Integer, HashMap<LocalDate, Integer>> hotelDateMap = new HashMap<>();
         BookingDatabaseHandler bookingHandler = new BookingDatabaseHandler();
         HotelDatabaseHandler hotelHandler = new HotelDatabaseHandler();
@@ -136,15 +158,40 @@ public class BookingServlet extends HttpServlet {
         return true;
    }
 
-   private void createBooking(Booking booking) {
+   private void createBooking(int hotelId, LocalDate startDate, LocalDate endDate, int numRooms, String username, LocalDateTime curTime) {
        BookingDatabaseHandler bookingHandler = new BookingDatabaseHandler();
-       LocalDate start = booking.startDate(), end = booking.endDate();
-       HashMap<LocalDate, Integer> curMap = hotelDateMap.get(booking.hotelId());
+       LocalDate start = startDate, end = endDate;
+       bookingHandler.addBooking(
+               new Booking(
+                       getBookingId(username, hotelId, start, end, curTime),
+                       hotelId, start, end, numRooms, username, curTime
+               )
+       );
+       HashMap<LocalDate, Integer> curMap = hotelDateMap.get(hotelId);
        while (start.isBefore(end.plusDays(1))) {
-            curMap.put(start, curMap.getOrDefault(start, 0) + booking.numRooms());
+            curMap.put(start, curMap.getOrDefault(start, 0) + numRooms);
             start = start.plusDays(1);
-        }
-
-        bookingHandler.addBooking(booking);
+       }
    }
+
+    private String getBookingId(String username, int hotelId, LocalDate start, LocalDate end, LocalDateTime timeBooked) {
+        String target = username + hotelId + start + end + timeBooked;
+        String hashed = null;
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            md.update(target.getBytes());
+            hashed = encodeHex(md.digest());
+        } catch (Exception ex) {
+            System.out.println("Password hash failed");
+        }
+        assert hashed != null;
+        return hashed.substring(0, 20);
+    }
+
+    private static String encodeHex(byte[] bytes) {
+        BigInteger bigInt = new BigInteger(1, bytes);
+        String hex = String.format("%0" + 64 + "X", bigInt);
+        assert hex.length() == 64;
+        return hex;
+    }
 }

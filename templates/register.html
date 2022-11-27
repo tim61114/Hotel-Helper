@@ -10,11 +10,11 @@
 <form method="post" action="/register">
     Username
     <label>
-        <input type="text" name="username">
+        <input type="text" name="username" required>
     </label><br>
     Password
     <label>
-        <input type="password" name="password"  pattern="[A-Za-z_1-9]{8,}">
+        <input type="password" name="password"  pattern="[A-Za-z_1-9]{8,}" required>
     </label><br>
     <p><input type="submit" value="Submit"></p>
 </form>

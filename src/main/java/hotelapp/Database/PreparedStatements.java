@@ -132,10 +132,10 @@ public class PreparedStatements {
             "SELECT * FROM bookings;";
 
     public static final String GET_USER_BOOKING =
-            "SELECT * FROM bookings WHERE username = ?";
+            "SELECT * FROM bookings WHERE username = ? ORDER BY startDate ASC";
 
-    public static final String GET_BOOKING_BY_HOTEL_ID =
-            "SELECT * FROM bookings WHERE hotel_id = ?";
+    public static final String GET_BOOKING_BY_BOOKING_ID =
+            "SELECT * FROM bookings WHERE booking_id = ?";
 
     public static final String DELETE_BOOKING =
             "DELETE FROM bookings WHERE booking_id = ?";

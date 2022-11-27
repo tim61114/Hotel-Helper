@@ -5,7 +5,6 @@ import hotelapp.Model.Booking;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,10 +60,9 @@ public class BookingDatabaseHandler {
             return;
         }
 
-        String bookingId = createBookingId(booking);
         try {
             PreparedStatement statement = dbConnection.prepareStatement(PreparedStatements.ADD_BOOKING);
-            statement.setString(1, bookingId);
+            statement.setString(1, booking.bookingId());
             statement.setInt(2, booking.hotelId());
             statement.setDate(3, Date.valueOf(booking.startDate()));
             statement.setDate(4, Date.valueOf(booking.endDate()));
@@ -96,6 +94,7 @@ public class BookingDatabaseHandler {
             while (result.next()) {
                 bookingList.add(
                         new Booking(
+                                result.getString("booking_id"),
                                 result.getInt("hotel_id"),
                                 result.getDate("startDate").toLocalDate(),
                                 result.getDate("endDate").toLocalDate(),
@@ -128,6 +127,7 @@ public class BookingDatabaseHandler {
             while (result.next()) {
                 bookingList.add(
                         new Booking(
+                                result.getString("booking_id"),
                                 result.getInt("hotel_id"),
                                 result.getDate("startDate").toLocalDate(),
                                 result.getDate("endDate").toLocalDate(),
@@ -144,26 +144,57 @@ public class BookingDatabaseHandler {
         return bookingList;
     }
 
-    private String createBookingId(Booking booking) {
-        String target = booking.username() + booking.hotelId() + booking.startDate() + booking.endDate() + LocalDate.now();
-        String hashed = null;
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            md.update(target.getBytes());
-            hashed = encodeHex(md.digest());
-        } catch (Exception ex) {
-            System.out.println("Password hash failed");
+    public Booking getBookingByBookingId(String bookingId) {
+        Connection dbConnection = dbHandler.getConnection();
+        if (dbConnection == null) {
+            System.out.println("Unable to connect to database.");
+            return null;
         }
-        assert hashed != null;
-        return hashed.substring(0, 20);
+        try {
+            PreparedStatement statement;
+            statement = dbConnection.prepareStatement(PreparedStatements.GET_BOOKING_BY_BOOKING_ID);
+            statement.setString(1, bookingId);
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                return new Booking(
+                        result.getString("booking_id"),
+                        result.getInt("hotel_id"),
+                        result.getDate("startDate").toLocalDate(),
+                        result.getDate("endDate").toLocalDate(),
+                        result.getInt("numRooms"),
+                        result.getString("username"),
+                        result.getTimestamp("timeBooked").toLocalDateTime()
+                );
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getErrorCode());
+            System.out.println(e.getMessage());
+        }
+        return null;
     }
 
-    private static String encodeHex(byte[] bytes) {
-        BigInteger bigInt = new BigInteger(1, bytes);
-        String hex = String.format("%0" + 64 + "X", bigInt);
-        assert hex.length() == 64;
-        return hex;
+    public boolean deleteBooking(String bookingId) {
+        Connection dbConnection = dbHandler.getConnection();
+        if (dbConnection == null) {
+            System.out.println("Unable to connect to database.");
+            return false;
+        }
+
+        try {
+            PreparedStatement statement;
+            statement = dbConnection.prepareStatement(PreparedStatements.DELETE_BOOKING);
+            statement.setString(1, bookingId);
+            statement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println(e.getErrorCode());
+            System.out.println(e.getMessage());
+        }
+        return false;
+
     }
+
+
 
     public static void main(String[] args) {
         BookingDatabaseHandler bookingHandler = new BookingDatabaseHandler();

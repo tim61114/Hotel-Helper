@@ -1,6 +1,7 @@
 package hotelapp;
 
 import hotelapp.servlets.Booking.BookingServlet;
+import hotelapp.servlets.Booking.DeleteBookingServlet;
 import hotelapp.servlets.Home.HomeServlet;
 import hotelapp.servlets.Hotel.HotelServlet;
 import hotelapp.servlets.LoginAndRegistration.LoginServiceServlet;
@@ -47,6 +48,7 @@ public class HotelServer {
 		handler.addServlet(EditReviewServlet.class, "/edit");
 		handler.addServlet(DeleteReviewServlet.class, "/delete");
 		handler.addServlet(BookingServlet.class, "/booking");
+		handler.addServlet(DeleteBookingServlet.class, "/delete_booking");
 
 		server.setHandler(handler);
 	}

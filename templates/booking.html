@@ -14,6 +14,12 @@
 </form>
 
 <h3>Your Bookings</h3>
+#if($!removeBookingError)
+<p style="color:red;">$removeBookingError</p>
+#end
+#if($!removeBookingSuccess)
+<p style="color:green;">$removeBookingSuccess</p>
+#end
 <table>
     <tr>
         <td>Hotel</td>
@@ -21,6 +27,7 @@
         <td>Ending Date</td>
         <td>Number of Rooms</td>
         <td>Time booked</td>
+        <td>Delete booking</td>
     </tr>
     #foreach($booking in $bookings)
     $booking
