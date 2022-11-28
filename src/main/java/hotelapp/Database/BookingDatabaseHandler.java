@@ -11,6 +11,10 @@ import java.util.List;
 public class BookingDatabaseHandler {
     private final DatabaseHandler dbHandler = DatabaseHandler.getInstance();
 
+    /**
+     * Creates a booking table in the database
+     * @return true if success, false if failed
+     */
     public boolean createBookingTable() {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -33,6 +37,10 @@ public class BookingDatabaseHandler {
         return true;
     }
 
+    /**
+     * Drop the booking table
+     * @return true if success, false if failed
+     */
     public boolean dropBookingTable() {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -53,6 +61,10 @@ public class BookingDatabaseHandler {
         return true;
     }
 
+    /**
+     * Add a booking to the bookings table
+     * @param booking is the booking to be added
+     */
     public void addBooking(Booking booking) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -78,6 +90,11 @@ public class BookingDatabaseHandler {
         }
     }
 
+    /**
+     * Get all bookings of a user
+     * @param username is the target username
+     * @return a list of Booking
+     */
     public List<Booking> getUserBooking(String username) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -112,6 +129,10 @@ public class BookingDatabaseHandler {
 
     }
 
+    /**
+     * Get all existing booking in the table
+     * @return a List of booking
+     */
     public List<Booking> getAllBookings() {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -144,6 +165,11 @@ public class BookingDatabaseHandler {
         return bookingList;
     }
 
+    /**
+     * Get a booking by booking ID
+     * @param bookingId is the target booking ID
+     * @return a Booking if found, otherwise null
+     */
     public Booking getBookingByBookingId(String bookingId) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -173,6 +199,11 @@ public class BookingDatabaseHandler {
         return null;
     }
 
+    /**
+     * Delete a booking by the booking ID
+     * @param bookingId is the target booking ID to remove
+     * @return true if delete is successful, otherwise false
+     */
     public boolean deleteBooking(String bookingId) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {

@@ -15,6 +15,9 @@ import java.util.Optional;
 public class ReviewDatabaseHandler {
     private final DatabaseHandler dbHandler = DatabaseHandler.getInstance();
 
+    /**
+     * Creates a review and a ratings table
+     */
     public void createReviewAndRatingTable() {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -36,6 +39,9 @@ public class ReviewDatabaseHandler {
         }
     }
 
+    /**
+     * Drops the review and ratings table
+     */
     public void dropReviewAndRatingTable() {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -57,6 +63,11 @@ public class ReviewDatabaseHandler {
         }
     }
 
+    /**
+     * Get a list of reviews with the given hotel ID
+     * @param hotelId is the target hotel ID
+     * @return a list of Reviews
+     */
     public List<Review> getProcessedReviewsByHotelId(int hotelId) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -92,6 +103,11 @@ public class ReviewDatabaseHandler {
         return queryResult;
     }
 
+    /**
+     * Find the ratings of a hotel
+     * @param hotelId is the target hotel ID
+     * @return an Optional of Rating, empty if the hotel ID is not found in the table
+     */
     public Optional<Rating> getRatingByHotelId(int hotelId) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -123,6 +139,16 @@ public class ReviewDatabaseHandler {
         return Optional.empty();
     }
 
+    /**
+     * Add a Review to the database
+     * @param hotelId is the target hotel ID
+     * @param title is the title of the Review
+     * @param reviewText is the review Text
+     * @param username is the username
+     * @param reviewDate is the Date of the review
+     * @param rating is the rating
+     * @return true if successfully added to the database, otherwise false
+     */
     public boolean addReview(int hotelId, String title, String reviewText,
                           String username, LocalDateTime reviewDate, int rating) {
         Connection dbConnection = dbHandler.getConnection();
@@ -152,6 +178,11 @@ public class ReviewDatabaseHandler {
         }
     }
 
+    /**
+     * Remove a review from the table given the review ID
+     * @param reviewId is the target review ID to be removed
+     * @return true if successfully removed, otherwise false
+     */
     public boolean removeReviewById(String reviewId) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -173,6 +204,11 @@ public class ReviewDatabaseHandler {
 
     }
 
+    /**
+     * Get a review given a review ID
+     * @param reviewId is the target review ID
+     * @return a Review if is found
+     */
     public Review getReviewByReviewId(String reviewId) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -203,6 +239,11 @@ public class ReviewDatabaseHandler {
         return null;
     }
 
+    /**
+     * Get the average rating of a hotel
+     * @param hotelId is the target Hotel ID
+     * @return the average rating
+     */
     public double getAverageRatingByHotelId(int hotelId) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -226,6 +267,13 @@ public class ReviewDatabaseHandler {
 
     }
 
+    /**
+     * Get a hashed review ID
+     * @param username is the target username, used in hash
+     * @param hotelId is the target hotel ID, used in hash
+     * @param reviewDate is the time the review is added, used in hash
+     * @return a hashed String representing a unique review ID
+     */
     private String getReviewId(String username, int hotelId, LocalDateTime reviewDate) {
         String target = username + hotelId + reviewDate.toString();
         String hashed = null;
@@ -240,6 +288,9 @@ public class ReviewDatabaseHandler {
         return hashed.substring(0, 20);
     }
 
+    /**
+     * Helper method for hashing
+     */
     private static String encodeHex(byte[] bytes) {
         BigInteger bigInt = new BigInteger(1, bytes);
         String hex = String.format("%0" + 64 + "X", bigInt);
@@ -247,6 +298,9 @@ public class ReviewDatabaseHandler {
         return hex;
     }
 
+    /**
+     * Test method
+     */
     private void testReview() {
         try {
             PreparedStatement statement = dbHandler.getConnection().prepareStatement(PreparedStatements.ADD_REVIEW);
@@ -265,6 +319,9 @@ public class ReviewDatabaseHandler {
         }
     }
 
+    /**
+     * Test method
+     */
     private void testRating() {
         try {
             PreparedStatement statement = dbHandler.getConnection().prepareStatement(PreparedStatements.ADD_RATING);

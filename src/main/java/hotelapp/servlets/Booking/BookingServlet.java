@@ -108,7 +108,7 @@ public class BookingServlet extends HttpServlet {
                     "<td>" + booking.startDate() + "</td>" +
                     "<td>" + booking.endDate() + "</td>" +
                     "<td>" + booking.numRooms() + "</td>" +
-                    "<td>" + booking.timeBooked() + "</td>" +
+                    "<td>" + booking.timeBooked().toString().replaceAll("T", " ") + "</td>" +
                     "<td>" + "<form method=\"post\" action=\"/delete_booking?booking_id=" + booking.bookingId() + "\"><input type=\"submit\" value=\"Remove\"></form></td></tr>";
             formattedList.add(str);
         });
@@ -139,7 +139,6 @@ public class BookingServlet extends HttpServlet {
         if (startDate.isAfter(endDate)) {
             return 2; // Bad date
         }
-
         if (!isAvailable(hotelId, startDate, endDate, numRooms)) {
             return 1; // No room available
         }

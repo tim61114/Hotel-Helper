@@ -1,5 +1,6 @@
 package hotelapp.Database;
 
+import hotelapp.Database.LoadData.LoadHotels;
 import hotelapp.Model.Hotel;
 
 import java.sql.*;
@@ -10,6 +11,10 @@ import java.util.Optional;
 public class HotelDatabaseHandler {
     private final DatabaseHandler dbHandler = DatabaseHandler.getInstance();
 
+    /**
+     * Creates a new Hotel Table
+     * @return true if success, otherwise false
+     */
     public boolean createHotelTable() {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -30,6 +35,10 @@ public class HotelDatabaseHandler {
         return true;
     }
 
+    /**
+     * Drops the Hotel Table
+     * @return true if success, otherwise false
+     */
     public boolean dropHotelTable() {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -50,6 +59,10 @@ public class HotelDatabaseHandler {
         return true;
     }
 
+    /**
+     * Get all hotel IDs from the hotel table
+     * @return a list of hotel IDs, otherwise an empty list
+     */
     public List<Integer> getHotelIdList() {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -72,6 +85,11 @@ public class HotelDatabaseHandler {
         return idList;
     }
 
+    /**
+     * Get a list of hotels given a search keyword
+     * @param query is the keyword, if query is empty then all hotels are returned
+     * @return a processed HTML form format string of all hotels containing the search keyword
+     */
     public List<String> getProcessedHotels(String query) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -122,6 +140,11 @@ public class HotelDatabaseHandler {
         return queryResult;
     }
 
+    /**
+     * Get an Hotel object by hotel ID
+     * @param hotelId is the target hotel ID
+     * @return an optional of a Hotel, empty if the hotel is not found.
+     */
     public Optional<Hotel> getHotelById(int hotelId) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -155,6 +178,9 @@ public class HotelDatabaseHandler {
         return Optional.empty();
     }
 
+    /**
+     * Test method
+     */
 //    private void test() {
 //        try {
 //            PreparedStatement statement = dbHandler.getConnection().prepareStatement(PreparedStatements.ADD_HOTEL);
@@ -177,9 +203,8 @@ public class HotelDatabaseHandler {
 
     public static void main(String[] args) {
         HotelDatabaseHandler hotelHandler = new HotelDatabaseHandler();
-//        hotelHandler.dropHotelTable();
-//        hotelHandler.createHotelTable();
-//        LoadHotels.LoadHotelsToDB("input/hotels/hotels.json");
-        hotelHandler.getProcessedHotels("san");
+        hotelHandler.dropHotelTable();
+        hotelHandler.createHotelTable();
+        LoadHotels.LoadHotelsToDB("input/hotels/hotels.json");
     }
 }

@@ -12,13 +12,23 @@ public class DatabaseHandler {
     private final Properties config;
     private final String URI;
 
+
     private DatabaseHandler(String properties) {
         this.config = loadConfig(properties);
         this.URI = "jdbc:mysql://"+ config.getProperty("hostname") + "/" + config.getProperty("database");
     }
 
+    /**
+     * A singleton design pattern
+     * @return the databaseHandler object
+     */
     public static DatabaseHandler getInstance() { return databaseHandler; }
 
+
+    /**
+     * Connect to the database
+     * @return a Connection object if success, otherwise null
+     */
     public Connection getConnection() {
         try {
             return DriverManager.getConnection(URI, config.getProperty("username"), config.getProperty("password"));
@@ -29,6 +39,11 @@ public class DatabaseHandler {
         return null;
     }
 
+    /**
+     * Load database config file
+     * @param propertyFile is the property file
+     * @return a Properties object
+     */
     private Properties loadConfig(String propertyFile) {
         Properties config = new Properties();
         try (FileReader reader = new FileReader(propertyFile)) {

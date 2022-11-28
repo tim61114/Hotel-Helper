@@ -19,6 +19,11 @@ import java.util.ArrayDeque;
 import java.util.Queue;
 
 public class LoadReviews {
+
+    /**
+     * Loads all review to mySQL
+     * @param directory is the directory of the reviews
+     */
     public static void loadReviewsToDB(String directory) {
         try {
             Path p = Paths.get(directory);
@@ -40,6 +45,10 @@ public class LoadReviews {
         }
     }
 
+    /**
+     * Loads a single json review file to review table and ratings table
+     * @param reviewJson is a json review file
+     */
     private static void loadReviewAndRating(String reviewJson) {
         Connection dbConnection = DatabaseHandler.getInstance().getConnection();
         if (dbConnection == null) {
@@ -70,6 +79,13 @@ public class LoadReviews {
         }
     }
 
+    /**
+     * A helper method to load review data to a SQL statement and execute
+     * @param dbConnection is the database connection
+     * @param reviewArr is the Json content from a review
+     * @throws IOException if file parsing error
+     * @throws SQLException if SQL error exists
+     */
     private static void loadReview(Connection dbConnection, JsonArray reviewArr) throws IOException, SQLException {
         for (JsonElement reviewElem: reviewArr) {
             JsonObject currentUserReview = reviewElem.getAsJsonObject();
@@ -94,6 +110,13 @@ public class LoadReviews {
         }
     }
 
+    /**
+     * A helper method to load rating data to a SQL statement and execute
+     * @param dbConnection is the database connection
+     * @param ratingObject is the rating Json Object
+     * @throws IOException if parsing error
+     * @throws SQLException if SQL error exists
+     */
     private static void loadRating(Connection dbConnection, JsonObject ratingObject) throws IOException, SQLException {
 
         int hotelId = ratingObject.get("hotelId").getAsInt();
@@ -120,7 +143,4 @@ public class LoadReviews {
         statement.close();
     }
 
-    public static void main(String[] args) {
-        loadReviewsToDB("input/reviews");
-    }
 }

@@ -14,6 +14,11 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class LoadHotels {
+
+    /**
+     * Loads the json content to mySQL
+     * @param hotelJson is the hotelJson file
+     */
     public static void LoadHotelsToDB(String hotelJson) {
         Connection dbConnection = DatabaseHandler.getInstance().getConnection();
         if (dbConnection == null) {

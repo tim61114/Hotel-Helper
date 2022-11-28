@@ -11,6 +11,10 @@ public class UserDatabaseHandler {
     private final DatabaseHandler dbHandler = DatabaseHandler.getInstance();
     private final Random random = new Random();
 
+    /**
+     * Create a user table
+     * @return true if successfully created, otherwise false
+     */
     public boolean createUserTable() {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -31,6 +35,10 @@ public class UserDatabaseHandler {
         return true;
     }
 
+    /**
+     * Drop the user table
+     * @return true if successfully dropped, otherwise false
+     */
     public boolean dropUserTable() {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -51,6 +59,12 @@ public class UserDatabaseHandler {
         return true;
     }
 
+    /**
+     * Store the user into the database
+     * @param username is the username to be stored
+     * @param password is the password of the user
+     * @return a value indicating success or failure
+     */
     public int registerUser(String username, String password) {
         byte[] saltBytes = new byte[16];
         random.nextBytes(saltBytes);
@@ -82,6 +96,12 @@ public class UserDatabaseHandler {
         return DatabaseErrorCodes.SUCCESS;
     }
 
+    /**
+     * Check if the login credential matches a user in the database
+     * @param username is the logged-in username
+     * @param password is the logged-in password
+     * @return true if success, otherwise false
+     */
     public boolean authenticateUser(String username, String password) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -110,6 +130,12 @@ public class UserDatabaseHandler {
         return false;
     }
 
+    /**
+     * Get the salt string of a user
+     * @param connection is a database connection
+     * @param username is the target user
+     * @return an Optional of a String, optional will be empty if failed to find.
+     */
     private static Optional<String> getSalt(Connection connection, String username) {
         String salt = null;
         try (PreparedStatement statement = connection.prepareStatement(PreparedStatements.SALT_SQL)) {
@@ -125,6 +151,9 @@ public class UserDatabaseHandler {
         return Optional.ofNullable(salt);
     }
 
+    /**
+     * Helper method of hashing
+     */
     private static String encodeHex(byte[] bytes, int length) {
         BigInteger bigInt = new BigInteger(1, bytes);
         String hex = String.format("%0" + length + "X", bigInt);
@@ -132,6 +161,12 @@ public class UserDatabaseHandler {
         return hex;
     }
 
+    /**
+     * Get hashed password
+     * @param password is the target password to be hashed
+     * @param salt is the user's salt String
+     * @return the hashed String
+     */
     private static String getHash(String password, String salt) {
         String salted = salt + password;
         String hashed = null;
