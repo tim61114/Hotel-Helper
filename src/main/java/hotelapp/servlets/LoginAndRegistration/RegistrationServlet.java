@@ -64,6 +64,11 @@ public class RegistrationServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Check password difficulty from backend
+     * @param password is the current password
+     * @return false if the password is too easy
+     */
     private boolean passwordDifficultyCheck(String password) {
         String regex = "(?=.*[a-zA-Z])(?=.*\\d)(?=.{8,})";
         Pattern p = Pattern.compile(regex);
@@ -71,6 +76,11 @@ public class RegistrationServlet extends HttpServlet {
         return matcher.find();
     }
 
+    /**
+     * Helper method to redirect to either login or register page
+     * @param status is the login status to check
+     * @throws IOException if redirect failed
+     */
     private void redirect(HttpServletRequest request, HttpServletResponse response, int status) throws IOException {
         HttpSession session = request.getSession();
         session.setAttribute("status", status);

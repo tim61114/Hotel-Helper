@@ -52,6 +52,11 @@ public class HomeServlet extends HttpServlet {
         out.write(writer.toString());
     }
 
+    /**
+     * redirect the page to designated state, handles not logged in cases and pagination in home.
+     * @return true if redirection is needed
+     * @throws IOException if unable to redirect
+     */
     private boolean redirectHandler(HttpServletRequest request, HttpServletResponse response) throws IOException {
         HttpSession session = request.getSession();
         JsonObject userJson = (JsonObject) session.getAttribute("loginInfo");
@@ -69,6 +74,11 @@ public class HomeServlet extends HttpServlet {
         return false;
     }
 
+    /**
+     * Sets the current page to be shown in a list
+     * @param session to read the current page info
+     * @return a formatted String HTML form
+     */
     private List<String> paginationHandler(HttpSession session) {
         String pageNumString = (String) session.getAttribute("page");
         int pageNum = 1;
@@ -82,6 +92,13 @@ public class HomeServlet extends HttpServlet {
                 .toList();
     }
 
+    /**
+     * Helper method to create a VelocityContext object
+     * @param username is the current username
+     * @param hotelTable is the paginated hotel data
+     * @param pages is the row of pages
+     * @return the VelocityContext to be merged
+     */
     private VelocityContext contextHandler(String username, List<String> hotelTable, List<String> pages) {
         VelocityContext context = new VelocityContext();
         context.put("username", username);

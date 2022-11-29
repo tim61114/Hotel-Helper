@@ -31,6 +31,10 @@ public class HotelServer {
 		}
 	}
 
+	/**
+	 * Helper method to load servlet classes to server
+	 * @param server is the server to add servlets to
+	 */
 	private static void init(Server server) {
 		ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS);
 

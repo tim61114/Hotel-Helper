@@ -76,6 +76,11 @@ public class HotelServlet extends HttpServlet {
 
     }
 
+    /**
+     * Handles the case if the user is not logged in or if user tried a bad hotelId from URL
+     * @return true if redirection is needed
+     * @throws IOException if sendRedirect fails
+     */
     private boolean redirectHandler(HttpServletRequest request, HttpServletResponse response) throws IOException {
         HttpSession session = request.getSession();
         JsonObject userJson = (JsonObject) session.getAttribute("loginInfo");
@@ -93,6 +98,17 @@ public class HotelServlet extends HttpServlet {
         return false;
     }
 
+    /**
+     * Helper method for handling all context to be put into page
+     * @param hotel is the Hotel data
+     * @param averageRating is the average rating of the hotel
+     * @param rating is the Rating object (Currently not used)
+     * @param reviews is the List of formatted reviews in HTML form
+     * @param ratingError is a flag for sending ratingError messages
+     * @param review is the Review to be edited if needed
+     * @param bookingStatus is the bookingStatus of the current session
+     * @return the VelocityContext to be merged
+     */
     private VelocityContext contextHandler(Hotel hotel, double averageRating, Rating rating, List<String> reviews,
                                            boolean ratingError, Review review, String bookingStatus) {
         VelocityContext context = new VelocityContext();
@@ -123,6 +139,13 @@ public class HotelServlet extends HttpServlet {
         return context;
     }
 
+    /**
+     * Helper method to parse reviews into HTML form including edit and delete button for current user
+     * @param reviews is the list of reviews of the current hotel
+     * @param currentUser is the current user
+     * @param edit is if the session is in edit mode or not
+     * @return a List of String in HTML form format
+     */
     private List<String> processReviews(List<Review> reviews, String currentUser, boolean edit) {
         return reviews.stream()
                 .map(
@@ -150,6 +173,11 @@ public class HotelServlet extends HttpServlet {
                 .toList();
     }
 
+    /**
+     * Helper method to get the review data to be edited
+     * @param session is the current session
+     * @return the Review if an edit is requested
+     */
     private Review getReviewToBeEdited(HttpSession session) {
         String editReviewId = (String) session.getAttribute("EditReview");
         Review review = null;

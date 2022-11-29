@@ -17,6 +17,7 @@ public class DeleteBookingServlet extends HttpServlet {
         String bookingId = request.getParameter("booking_id");
         BookingDatabaseHandler bookingHandler = new BookingDatabaseHandler();
         Booking booking = bookingHandler.getBookingByBookingId(bookingId);
+        // Add session element to track removal status. 0 for successful deletion, 1 for unsuccessful.
         if (bookingHandler.deleteBooking(bookingId)) {
             session.setAttribute("removeStatus", "0");
             BookingServlet.removeFromMap(booking);
