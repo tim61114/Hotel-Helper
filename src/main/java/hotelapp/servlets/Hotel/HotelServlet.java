@@ -107,8 +107,8 @@ public class HotelServlet extends HttpServlet {
 
         if (review != null) {
             context.put("comments", review.reviewText());
-        } else {
-            context.put("comments", "Your comments here");
+            context.put("title", "\"" + review.title() + "\"");
+            context.put("prev_rating", review.rating());
         }
 
         if (bookingStatus != null) {

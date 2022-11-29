@@ -58,20 +58,31 @@
 
 <p class="-summary">Average Rating: $avgRating</p>
 
-<br>
+<h4>Add New Rating</h4>
 <form method="post" action="/review" id="reviewForm">
     Title:
     <label>
-        <input type="text" name="title" size="24">
+        #if($!title)
+            <input type="text" name="title" size="24" value=$title>
+        #else
+            <input type="text" name="title" size="24">
+        #end
     </label>
     Rating:
     <label>
-        <input type="text" name="rating" maxlength="1" size="2">
+        #if($!prev_rating)
+            <input type="text" name="rating" maxlength="1" size="2" value=$prev_rating>
+        #else
+            <input type="text" name="rating" maxlength="1" size="2">
+        #end
     </label>
     <label><input type="submit"></label>
 </form>
-<textarea rows="4" cols="50" name="comment" form="reviewForm">
-$comments</textarea>
+<textarea rows="4" cols="50" name="comment" form="reviewForm" placeholder="Add comments here">
+#if($!comments)
+$comments
+#end
+</textarea>
 #if($!RatingError)
 <p style="color:red;">$RatingError</p>
 #end
