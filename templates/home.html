@@ -7,7 +7,10 @@
 </head>
 <body>
 <h3>Hello, $username</h3>
-
+#if($!previousLogin)
+<h4>Previous login: $previousLogin</h4>
+#end
+<h4></h4>
 <form method="post" action="/logout">
     <input type="submit" value="Logout">
 </form>

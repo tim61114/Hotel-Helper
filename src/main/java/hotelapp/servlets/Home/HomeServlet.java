@@ -43,9 +43,9 @@ public class HomeServlet extends HttpServlet {
 
         VelocityEngine v = (VelocityEngine) request.getServletContext().getAttribute("templateEngine");
         Template template = v.getTemplate("templates/home.html");
-        String username = ((JsonObject) session.getAttribute("loginInfo")).get("username").getAsString();
+        JsonObject loginInfo = (JsonObject) session.getAttribute("loginInfo");
 
-        VelocityContext context = contextHandler(username, hotelTable, pages);
+        VelocityContext context = contextHandler(loginInfo, hotelTable, pages);
         StringWriter writer = new StringWriter();
         template.merge(context, writer);
 
@@ -94,14 +94,17 @@ public class HomeServlet extends HttpServlet {
 
     /**
      * Helper method to create a VelocityContext object
-     * @param username is the current username
+     * @param loginInfo is the current login info of the user
      * @param hotelTable is the paginated hotel data
      * @param pages is the row of pages
      * @return the VelocityContext to be merged
      */
-    private VelocityContext contextHandler(String username, List<String> hotelTable, List<String> pages) {
+    private VelocityContext contextHandler(JsonObject loginInfo, List<String> hotelTable, List<String> pages) {
         VelocityContext context = new VelocityContext();
+        String username = loginInfo.get("username").getAsString();
+        String previousLogin = loginInfo.get("previousLogin").getAsString();
         context.put("username", username);
+        context.put("previousLogin", previousLogin.equals("null") ? null : previousLogin.replace('T', ' '));
         context.put("hotels", hotelTable);
         context.put("pages", pages);
         return context;

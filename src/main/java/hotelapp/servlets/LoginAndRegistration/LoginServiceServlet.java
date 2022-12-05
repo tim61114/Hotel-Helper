@@ -55,9 +55,11 @@ public class LoginServiceServlet extends HttpServlet {
         UserDatabaseHandler userDB = new UserDatabaseHandler();
         if (userDB.authenticateUser(username, password)) {
             String timestamp = LocalDateTime.now().toString();
+            LocalDateTime previousLogin = userDB.getPreviousLogin(username);
             JsonObject loginInfo = new JsonObject();
             loginInfo.addProperty("username", username);
             loginInfo.addProperty("time", timestamp);
+            loginInfo.addProperty("previousLogin", String.valueOf(previousLogin));
             session.setAttribute("loginInfo", loginInfo);
             session.setAttribute("status", LoginStatusCodes.SUCCESS);
             response.sendRedirect("/home");

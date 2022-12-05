@@ -26,6 +26,21 @@ public class PreparedStatements {
             "SELECT username FROM users " +
                     "WHERE username LIKE binary ? AND password = ?";
 
+    public static final String CREATE_LOGIN_INFO_TABLE =
+            "CREATE TABLE login_info (" +
+                    "username VARCHAR(32) PRIMARY KEY, " +
+                    "previous_login TIMESTAMP NOT NULL) ";
+
+    public static final String DROP_LOGIN_INFO_TABLE =
+            "DROP TABLE login_info";
+
+    public static final String GET_PREVIOUS_LOGIN_BY_USERNAME =
+            "SELECT previous_login FROM login_info WHERE username = ?";
+
+    public static final String INSERT_TO_LOGIN_INFO =
+            "INSERT INTO login_info (username, previous_login) " +
+                    "VALUES(?, ?) ON DUPLICATE KEY UPDATE previous_login=?";
+
     public static final String CREATE_HOTEL_TABLE =
             "CREATE TABLE hotels (" +
                     "id INTEGER AUTO_INCREMENT PRIMARY KEY, " +
