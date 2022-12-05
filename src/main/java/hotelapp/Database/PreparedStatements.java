@@ -73,6 +73,28 @@ public class PreparedStatements {
     public static final String GET_ALL_HOTEL_ID =
             "SELECT hotel_id FROM hotels;";
 
+    public static final String CREATE_EXPEDIA_HISTORY_TABLE =
+            "CREATE TABLE expedia_history (" +
+                    "id INTEGER AUTO_INCREMENT PRIMARY KEY, " +
+                    "username VARCHAR(20) NOT NULL, " +
+                    "hotel_id INTEGER NOT NULL, " +
+                    "time TIMESTAMP);";
+
+    public static final String DROP_EXPEDIA_HISTORY_TABLE =
+            "DROP TABLE expedia_history;";
+
+    public static final String GET_USER_EXPEDIA_HISTORY =
+            "SELECT hotel_name, hotels.hotel_id, time FROM " +
+                    "(SELECT * FROM expedia_history WHERE username = ?) a " +
+                    "INNER JOIN hotels on a.hotel_id = hotels.hotel_id";
+
+    public static final String DELETE_USER_EXPEDIA_HISTORY =
+            "DELETE FROM expedia_history WHERE username = ?";
+
+    public static final String ADD_USER_EXPEDIA_HISTORY =
+            "INSERT INTO expedia_history (username, hotel_id, time) " +
+                    "VALUES (?, ?, ?);";
+
     public static final String CREATE_REVIEW_TABLE =
             "CREATE TABLE reviews (" +
                     "id INTEGER AUTO_INCREMENT PRIMARY KEY, " +

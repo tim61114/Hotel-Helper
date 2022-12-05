@@ -1,9 +1,11 @@
 package hotelapp.Database;
 
 import hotelapp.Database.LoadData.LoadHotels;
+import hotelapp.Model.ExpediaHistory;
 import hotelapp.Model.Hotel;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -179,6 +181,124 @@ public class HotelDatabaseHandler {
     }
 
     /**
+     * Creates a new Expedia history Table
+     * @return true if success, otherwise false
+     */
+    public boolean createExpediaHistoryTable() {
+        Connection dbConnection = dbHandler.getConnection();
+        if (dbConnection == null) {
+            System.out.println("Unable to connect to database.");
+            return false;
+        }
+        try {
+            PreparedStatement statement = dbConnection.prepareStatement(PreparedStatements.CREATE_EXPEDIA_HISTORY_TABLE);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            if (e.getErrorCode() == DatabaseErrorCodes.TABLE_EXISTS) {
+                System.out.println("Expedia history table already exists.");
+            } else {
+                System.out.println("An error occurred.");
+            }
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Drops the Expedia history Table
+     * @return true if success, otherwise false
+     */
+    public boolean dropExpediaHistoryTable() {
+        Connection dbConnection = dbHandler.getConnection();
+        if (dbConnection == null) {
+            System.out.println("Unable to connect to database.");
+            return false;
+        }
+        try {
+            PreparedStatement statement = dbConnection.prepareStatement(PreparedStatements.DROP_EXPEDIA_HISTORY_TABLE);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            if (e.getErrorCode() == DatabaseErrorCodes.TABLE_DOES_NOT_EXIST) {
+                System.out.println("Table expedia history does not exist.");
+            } else {
+                System.out.println("An error occurred.");
+            }
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Get a list of Expedia history of given a user
+     * @param username is the username to look for
+     * @return a list of ExpediaHistory objects, consisting Hotel name and timestamp
+     */
+    public List<ExpediaHistory> getExpediaHistory(String username) {
+        Connection dbConnection = dbHandler.getConnection();
+        if (dbConnection == null) {
+            System.out.println("Unable to connect to database.");
+            return new ArrayList<>();
+        }
+
+        List<ExpediaHistory> history = new ArrayList<>();
+        try {
+            PreparedStatement statement = dbConnection.prepareStatement(PreparedStatements.GET_USER_EXPEDIA_HISTORY);
+            statement.setString(1, username);
+
+            ResultSet result = statement.executeQuery();
+            while (result.next()) {
+                history.add(new ExpediaHistory(
+                        result.getString(1),
+                        result.getInt(2),
+                        result.getTimestamp(2).toLocalDateTime()
+                ));
+            }
+
+            return history;
+        } catch (SQLException e) {
+            System.out.println(e.getErrorCode());
+            System.out.println(e.getMessage());
+        }
+        return history;
+    }
+
+    public void deleteUserExpediaHistory(String username) {
+        Connection dbConnection = dbHandler.getConnection();
+        if (dbConnection == null) {
+            System.out.println("Unable to connect to database.");
+            return;
+        }
+        try {
+            PreparedStatement statement = dbConnection.prepareStatement(PreparedStatements.DELETE_USER_EXPEDIA_HISTORY);
+            statement.setString(1, username);
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println(e.getErrorCode());
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void addUserExpediaHistory(String username, int hotelId, LocalDateTime time) {
+        Connection dbConnection = dbHandler.getConnection();
+        if (dbConnection == null) {
+            System.out.println("Unable to connect to database.");
+            return;
+        }
+        try {
+            PreparedStatement statement = dbConnection.prepareStatement(PreparedStatements.ADD_USER_EXPEDIA_HISTORY);
+            statement.setString(1, username);
+            statement.setInt(2, hotelId);
+            statement.setTimestamp(3, Timestamp.valueOf(time));
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println(e.getErrorCode());
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /**
      * Test method
      */
 //    private void test() {
@@ -203,8 +323,10 @@ public class HotelDatabaseHandler {
 
     public static void main(String[] args) {
         HotelDatabaseHandler hotelHandler = new HotelDatabaseHandler();
-        hotelHandler.dropHotelTable();
-        hotelHandler.createHotelTable();
-        LoadHotels.LoadHotelsToDB("input/hotels/hotels.json");
+//        hotelHandler.dropHotelTable();
+//        hotelHandler.createHotelTable();
+//        LoadHotels.LoadHotelsToDB("input/hotels/hotels.json");
+        hotelHandler.dropExpediaHistoryTable();
+        hotelHandler.createExpediaHistoryTable();
     }
 }

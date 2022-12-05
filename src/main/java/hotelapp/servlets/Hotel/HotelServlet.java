@@ -116,7 +116,7 @@ public class HotelServlet extends HttpServlet {
         context.put("hotel", hotel);
         context.put("reviews", reviews);
         context.put("avgRating", averageRating);
-        context.put("Expedia", "<a href=\"https://www.expedia.com/h" + hotel.hotelId() + ".Hotel-Information\" target=\"_blank\">Expedia</a>");
+        context.put("Expedia", "<a href=\"/expedia?hotelId=" + hotel.hotelId() +"\" target=\"_blank\">Expedia</a>");
         if (ratingError) {
             context.put("RatingError", "Rating should be a number between 0 to 5");
         }
