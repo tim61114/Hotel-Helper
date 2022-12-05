@@ -68,7 +68,7 @@ public class ReviewDatabaseHandler {
      * @param hotelId is the target hotel ID
      * @return a list of Reviews
      */
-    public List<Review> getProcessedReviewsByHotelId(int hotelId) {
+    public List<Review> getProcessedReviewsByHotelId(int hotelId, String username) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
             System.out.println("Unable to connect to database.");
@@ -92,7 +92,7 @@ public class ReviewDatabaseHandler {
                                 result.getString("userNickname"),
                                 result.getTimestamp("reviewDate").toLocalDateTime(),
                                 result.getInt("rating"),
-                                false
+                                result.getString("userNickname").equals(username)
                         )
                 );
             }

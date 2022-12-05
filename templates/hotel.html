@@ -97,6 +97,7 @@
 #if($!BookingSuccess)
 <p style="color:green;">$BookingSuccess</p>
 #end
+<h1>&nbsp;</h1>
 
 <!--<table style="width:100%" class="table">-->
 <!--    <tr>-->
@@ -150,24 +151,55 @@ $comments
 <p style="color:red;">$RatingError</p>
 #end
 
-
+<h1>&nbsp;</h1>
 <h3>Reviews </h3>
 <br>
-
+#foreach($r in $rawReviews)
 <div class="card">
     <div class="card-body">
-        <h4 class="card-title">Card title</h4>
-        <p class="card-text">Some example text. Some example text.</p>
-        <a href="#" class="card-link">Card link</a>
-        <a href="#" class="card-link">Another link</a>
+        #if($r.title() == "")
+        <h4 class="card-title">No title</h4>
+        #else
+        <h4 class="card-title">$r.title()</h4>
+        #end
+        <h6 class="card-subtitle mb-2 text-muted">$r.username(), $r.reviewDate().toString().replace('T', ' ')</h6>
+
+        <div class="row">
+            <div class="col-10">
+                <p class="card-text">$r.reviewText()</p>
+            </div>
+            #if($r.editable() && !$editMode)
+            <div class="col-1">
+                <form action=/edit?reviewId=$r.reviewId() method="post">
+                    <button type="submit" class="btn btn-primary btn-sm">Edit</button>
+                </form>
+            </div>
+            <div class="col-1">
+                <form action=/delete?reviewId=$r.reviewId() method="post">
+                    <button type="submit" class="btn btn-primary btn-sm">Delete</button>
+                </form>
+            </div>
+            #end
+        </div>
     </div>
 </div>
-
-<table class="table">
-#foreach($review in $reviews)
-    $review
 #end
-</table>
+
+<ul class="pagination">
+    #foreach($pagelink in $pages)
+    <!--    <p>$pagelink</p>-->
+    #if($velocityCount == $currentPage)
+    <li class="page-item active"><a class="page-link" href=$pagelink>$velocityCount</a></li>
+    #else
+    <li class="page-item"><a class="page-link" href=$pagelink>$velocityCount</a></li>
+    #end
+    #end
+</ul>
+<!--<table class="table">-->
+<!--#foreach($review in $reviews)-->
+<!--    $review-->
+<!--#end-->
+<!--</table>-->
 
 </body>
 </html>
