@@ -250,7 +250,7 @@ public class HotelDatabaseHandler {
                 history.add(new ExpediaHistory(
                         result.getString(1),
                         result.getInt(2),
-                        result.getTimestamp(2).toLocalDateTime()
+                        result.getTimestamp(3).toLocalDateTime()
                 ));
             }
 

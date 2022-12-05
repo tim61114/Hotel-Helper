@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Expedia</title>
+</head>
+<body>
+
+<a href="/home">Home</a>
+
+
+#if($!historyList)
+<form method="post" action="/expedia_history">
+    <input type="submit" value="Clear History">
+</form>
+<table>
+    <tr>
+        <td>Hotel</td>
+        <td>Time</td>
+    </tr>
+    #foreach($history in $historyList)
+        <tr>
+            <td><a href=/expedia?hotelId=$history.hotelId() target="_blank">$history.hotelName()</a></td>
+            <td>$history.time()</td>
+        </tr>
+    #end
+</table>
+#end
+
+</body>
+</html>
