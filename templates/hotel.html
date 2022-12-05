@@ -3,43 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <title>Hotel</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/home">Home</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mynavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mynavbar">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/booking">My Bookings</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/expedia_history">Expedia History</a>
+                </li>
+            </ul>
+            <form class="d-flex" method="post" action="/search">
+                <input class="form-control me-2" type="text" placeholder="Search for Hotels" name="searchColumn">
+                <button class="btn btn-primary" type="submit">Search</button>
+            </form>
+            <form class="d-flex" method="post" action="/logout">
+                <button class="btn btn-primary" type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
+</nav>
+<!--<a href="/home">Home</a> | <a href="/booking">Manage your bookings</a>-->
 
-<a href="/home">Home</a> | <a href="/booking">Manage your bookings</a>
+<h3>$hotel.name()</h3>
+<p>Hotel Address: $hotel.addr(), $hotel.city(), $hotel.state()  $Expedia</p>
+<p class="-summary">Average Rating: $avgRating</p>
 
-<form method="post" action="/booking">
-    <tr>
-        <td>
-            <label for="start"> Start date:
-                <input type="date" id="start" name="startDate" min="2022-11-20" max="2023-02-28" required/>
-            </label>
-        </td>
-        <td>
-            <label for="end"> End date:
-                <input type="date" id="end" name="endDate" min="2022-11-20" max="2023-02-28" required/>
-            </label>
-        </td>
-        <td>
-            <label> Number of Rooms:
-                <input type="text" name="numDays" size="1" maxlength="1" pattern="[1-3]" required>
-            </label>
-        </td>
-        <td>
-            <input type="submit" value="Check Availability">
-        </td>
-    </tr>
+<h4>Book this hotel</h4>
+<form method="post" action="/booking" id="bookingForm">
+    <div class="row">
+        <div class="col-sm-1">
+            <label >Start date</label>
+        </div>
+        <div class="col-sm">
+            <input type="date" id="start" name="startDate" min="2022-11-20" max="2023-02-28" class="form-control" name="startDate" required>
+        </div>
+        <div class="col-sm-1">
+            <label class="form-label">End date</label>
+        </div>
+        <div class="col-sm">
+            <input type="date" id="end" name="endDate" min="2022-11-20" max="2023-02-28" class="form-control" name="endDate" required>
+        </div>
+        <div class="col-sm-1">
+            <label class="form-label">Rooms</label>
+        </div>
+        <div class="col-sm">
+            <select class="form-select" name="numDays">
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+            </select>
+        </div>
+        <div class="col-sm">
+<!--            <label class="form-label">Number of Rooms</label>-->
+            <input type="submit" class="btn btn-success" value="Book">
+        </div>
+    </div>
 </form>
+
+<!--<form method="post" action="/booking">-->
+<!--    <tr>-->
+<!--        <td>-->
+<!--            <label for="start"> Start date:-->
+<!--                <input type="date" id="start" name="startDate" min="2022-11-20" max="2023-02-28" required/>-->
+<!--            </label>-->
+<!--        </td>-->
+<!--        <td>-->
+<!--            <label for="end"> End date:-->
+<!--                <input type="date" id="end" name="endDate" min="2022-11-20" max="2023-02-28" required/>-->
+<!--            </label>-->
+<!--        </td>-->
+<!--        <td>-->
+<!--            <label> Number of Rooms:-->
+<!--                <input type="text" name="numDays" size="1" maxlength="1" pattern="[1-3]" required>-->
+<!--            </label>-->
+<!--        </td>-->
+<!--        <td>-->
+<!--            <input type="submit" value="Check Availability">-->
+<!--        </td>-->
+<!--    </tr>-->
+<!--</form>-->
 #if($!BookingError)
 <p style="color:red;">$BookingError</p>
 #end
 #if($!BookingSuccess)
 <p style="color:green;">$BookingSuccess</p>
 #end
-
-<h3>$hotel.name()</h3>
-<p>Hotel Address: $hotel.addr(), $hotel.city(), $hotel.state()  $Expedia</p>
 
 <!--<table style="width:100%" class="table">-->
 <!--    <tr>-->
@@ -56,39 +113,56 @@
 <!--    </tr>-->
 <!--</table>-->
 
-<p class="-summary">Average Rating: $avgRating</p>
-
-<h4>Add New Rating</h4>
+<h4>Add New Review</h4>
 <form method="post" action="/review" id="reviewForm">
-    Title:
-    <label>
-        #if($!title)
-            <input type="text" name="title" size="24" value=$title>
-        #else
-            <input type="text" name="title" size="24">
-        #end
-    </label>
-    Rating:
-    <label>
-        #if($!prev_rating)
-            <input type="text" name="rating" maxlength="1" size="2" value=$prev_rating>
-        #else
-            <input type="text" name="rating" maxlength="1" size="2">
-        #end
-    </label>
-    <label><input type="submit"></label>
+    <div class="row">
+        <div class="col-6">
+            <label class="form-label">Title</label>
+            #if($!title)
+            <input type="text" class="form-control" placeholder="Enter title" name="title" value=$title required>
+            #else
+            <input type="text" class="form-control" placeholder="Enter title" name="title" required>
+            #end
+        </div>
+        <div class="col-1">
+            <label class="form-label">Rating</label>
+            #if($!prev_rating)
+            <input type="range" class="form-range" min="1" max="5" name="rating" value=$prev_rating>
+            #else
+            <input type="range" class="form-range" min="1" max="5" name="rating" value="5">
+            #end
+<!--            <input type="text" class="form-control" placeholder="Enter rating" name="rating">-->
+        </div>
+    </div>
 </form>
-<textarea rows="4" cols="50" name="comment" form="reviewForm" placeholder="Add comments here">
+<div class="col-8">
+<label for="comment">Comments:</label>
+<textarea class="form-control" rows="5" id="comment" name="comment" form="reviewForm" placeholder="Add comments here">
 #if($!comments)
 $comments
 #end
 </textarea>
+</div>
+<input type="submit" class="btn btn-success" value="Submit" form="reviewForm">
+
+
 #if($!RatingError)
 <p style="color:red;">$RatingError</p>
 #end
 
+
 <h3>Reviews </h3>
 <br>
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Card title</h4>
+        <p class="card-text">Some example text. Some example text.</p>
+        <a href="#" class="card-link">Card link</a>
+        <a href="#" class="card-link">Another link</a>
+    </div>
+</div>
+
 <table class="table">
 #foreach($review in $reviews)
     $review

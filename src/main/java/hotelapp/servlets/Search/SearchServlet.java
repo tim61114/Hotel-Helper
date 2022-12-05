@@ -57,7 +57,8 @@ public class SearchServlet extends HttpServlet {
 
         List<String> pages = new ArrayList<>();
         for (int i = 1; i <= totalPages + 1; i++) {
-            pages.add("<a href=\"/search?keyword=" + keyword + "&searchPage=" + i + "\">" + i + "</a>");
+            //pages.add("<a href=\"/search?keyword=" + keyword + "&searchPage=" + i + "\">" + i + "</a>");
+            pages.add("/search?keyword=" + keyword + "&searchPage=" + i);
         }
         PrintWriter out = response.getWriter();
         response.setContentType("text/html");
@@ -65,6 +66,7 @@ public class SearchServlet extends HttpServlet {
 
         VelocityEngine v = (VelocityEngine) request.getServletContext().getAttribute("templateEngine");
         VelocityContext context = new VelocityContext();
+        context.put("currentPage", searchPageNum);
         context.put("keyword", keyword);
         context.put("hotels", resultTable);
         context.put("pages", pages);

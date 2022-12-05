@@ -91,7 +91,8 @@ public class ReviewDatabaseHandler {
                                 result.getString("reviewText"),
                                 result.getString("userNickname"),
                                 result.getTimestamp("reviewDate").toLocalDateTime(),
-                                result.getInt("rating")
+                                result.getInt("rating"),
+                                false
                         )
                 );
             }
@@ -229,7 +230,8 @@ public class ReviewDatabaseHandler {
                         result.getString(5),
                         result.getString(6),
                         result.getTimestamp(7).toLocalDateTime(),
-                        result.getInt(8)
+                        result.getInt(8),
+                        false
                 );
             }
         } catch (SQLException e) {

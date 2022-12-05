@@ -34,7 +34,7 @@ public class HomeServlet extends HttpServlet {
         List<String> hotelTable = paginationHandler(session);
         List<String> pages = new ArrayList<>();
         for (int i = 1; i <= PAGES + 1; i++) {
-            pages.add("<a href=\"/home?page=" + i + "\">" + i + "</a>");
+            pages.add("/home?page=" + i);
         }
 
         PrintWriter out = response.getWriter();
@@ -45,7 +45,7 @@ public class HomeServlet extends HttpServlet {
         Template template = v.getTemplate("templates/home.html");
         JsonObject loginInfo = (JsonObject) session.getAttribute("loginInfo");
 
-        VelocityContext context = contextHandler(loginInfo, hotelTable, pages);
+        VelocityContext context = contextHandler(session, loginInfo, hotelTable, pages);
         StringWriter writer = new StringWriter();
         template.merge(context, writer);
 
@@ -99,10 +99,14 @@ public class HomeServlet extends HttpServlet {
      * @param pages is the row of pages
      * @return the VelocityContext to be merged
      */
-    private VelocityContext contextHandler(JsonObject loginInfo, List<String> hotelTable, List<String> pages) {
+    private VelocityContext contextHandler(HttpSession session, JsonObject loginInfo, List<String> hotelTable, List<String> pages) {
+        String currentPage = (String) session.getAttribute("page");
+        currentPage = currentPage == null ? "1" : currentPage;
+        session.setAttribute("page", "1");
         VelocityContext context = new VelocityContext();
         String username = loginInfo.get("username").getAsString();
         String previousLogin = loginInfo.get("previousLogin").getAsString();
+        context.put("currentPage", Integer.parseInt(currentPage));
         context.put("username", username);
         context.put("previousLogin", previousLogin.equals("null") ? null : previousLogin.replace('T', ' '));
         context.put("hotels", hotelTable);
