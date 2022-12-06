@@ -63,7 +63,8 @@ public class BookingServlet extends HttpServlet {
             session.removeAttribute("removeStatus");
         }
         //Load to Velocity
-        context.put("bookings", formattedBookingList);
+        //context.put("bookings", formattedBookingList);
+        context.put("bookings", bookingList);
         context.put("username", userJson.get("username").getAsString());
         template.merge(context, writer);
 
@@ -204,9 +205,11 @@ public class BookingServlet extends HttpServlet {
      */
    private void createBooking(int hotelId, LocalDate startDate, LocalDate endDate, int numRooms, String username, LocalDateTime curTime) {
        BookingDatabaseHandler bookingHandler = new BookingDatabaseHandler();
+       HotelDatabaseHandler hotelHandler = new HotelDatabaseHandler();
        LocalDate start = startDate, end = endDate;
        bookingHandler.addBooking(
                new Booking(
+                       hotelHandler.getHotelById(hotelId).get().name(),
                        getBookingId(username, hotelId, start, end, curTime),
                        hotelId, start, end, numRooms, username, curTime
                )

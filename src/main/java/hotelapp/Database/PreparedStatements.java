@@ -86,7 +86,7 @@ public class PreparedStatements {
     public static final String GET_USER_EXPEDIA_HISTORY =
             "SELECT hotel_name, hotels.hotel_id, time FROM " +
                     "(SELECT * FROM expedia_history WHERE username = ?) a " +
-                    "INNER JOIN hotels on a.hotel_id = hotels.hotel_id";
+                    "INNER JOIN hotels on a.hotel_id = hotels.hotel_id ORDER BY time DESC";
 
     public static final String DELETE_USER_EXPEDIA_HISTORY =
             "DELETE FROM expedia_history WHERE username = ?";
@@ -166,13 +166,13 @@ public class PreparedStatements {
                     "VALUES(?, ?, ?, ?, ?, ?, ?)";
 
     public static final String GET_ALL_BOOKING =
-            "SELECT * FROM bookings;";
+            "SELECT hotel_name, a.* FROM hotels INNER JOIN (SELECT * FROM bookings) a on a.hotel_id = hotels.hotel_id";
 
     public static final String GET_USER_BOOKING =
-            "SELECT * FROM bookings WHERE username = ? ORDER BY startDate ASC";
+            "SELECT hotel_name, a.* FROM hotels INNER JOIN (SELECT * FROM bookings WHERE username = ?) a on a.hotel_id = hotels.hotel_id ORDER BY startDate ASC";
 
     public static final String GET_BOOKING_BY_BOOKING_ID =
-            "SELECT * FROM bookings WHERE booking_id = ?";
+            "SELECT hotel_name, a.* FROM hotels INNER JOIN (SELECT * FROM bookings WHERE booking_id = ?) a on a.hotel_id = hotels.hotel_id";
 
     public static final String DELETE_BOOKING =
             "DELETE FROM bookings WHERE booking_id = ?";

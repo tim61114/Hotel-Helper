@@ -111,6 +111,7 @@ public class BookingDatabaseHandler {
             while (result.next()) {
                 bookingList.add(
                         new Booking(
+                                result.getString("hotel_name"),
                                 result.getString("booking_id"),
                                 result.getInt("hotel_id"),
                                 result.getDate("startDate").toLocalDate(),
@@ -148,6 +149,7 @@ public class BookingDatabaseHandler {
             while (result.next()) {
                 bookingList.add(
                         new Booking(
+                                result.getString("hotel_name"),
                                 result.getString("booking_id"),
                                 result.getInt("hotel_id"),
                                 result.getDate("startDate").toLocalDate(),
@@ -183,6 +185,7 @@ public class BookingDatabaseHandler {
             ResultSet result = statement.executeQuery();
             if (result.next()) {
                 return new Booking(
+                        result.getString("hotel_name"),
                         result.getString("booking_id"),
                         result.getInt("hotel_id"),
                         result.getDate("startDate").toLocalDate(),
