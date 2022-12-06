@@ -21,20 +21,18 @@
                     <a class="nav-link" href="/expedia_history">Expedia History</a>
                 </li>
             </ul>
-            <form class="d-flex" method="post" action="/search">
+            <form class="d-inline-flex p-2" method="post" action="/search">
                 <input class="form-control me-2" type="text" placeholder="Search for Hotels" name="searchColumn">
                 <button class="btn btn-primary" type="submit">Search</button>
             </form>
-            <form class="d-flex" method="post" action="/logout">
-                <button class="btn btn-primary" type="submit">Logout</button>
+            <form class="d-inline-flex p-2" method="post" action="/logout">
+                <button class="btn btn-dark" type="submit">Logout</button>
             </form>
         </div>
     </div>
 </nav>
-<h3>Hello, $username</h3>
-#if($!previousLogin)
-<h4>Previous login: $previousLogin</h4>
-#end
+
+
 
 <!--<form method="post" action="/logout">-->
 <!--    <input type="submit" value="Logout">-->
@@ -53,8 +51,8 @@
 
 <!--</form>-->
 
-<p>Hotels</p>
-<table>
+<!--<p>Hotels</p>-->
+<!--<table>
     <tr>
         <td>Hotel</td>
         <td>Address</td>
@@ -65,9 +63,27 @@
 #foreach($hotel in $hotels)
     $hotel
 #end
-</table>
+</table>-->
+<div class="container p-3 my-1">
+    #if($!previousLogin)
+    <h4>Welcome back, $username! Your previous login was at $previousLogin.</h4>
+    #else
+    <h4>Hello, $username</h4>
+    #end
+    <h3>Hotels</h3>
 
-<ul class="pagination">
+    #foreach($hotel in $hotels)
+    <div class="card">
+        <div class="card-body">
+            <a href=/hotel?hotelId=$hotel.hotelId() class="card-title">$hotel.name()</a>
+            <h6 class="card-subtitle mb-2 text-muted">$hotel.addr(), $hotel.city(), $hotel.state()</h6>
+        </div>
+    </div>
+    #end
+</div>
+
+
+<ul class="pagination justify-content-center">
     #foreach($pagelink in $pages)
 <!--    <p>$pagelink</p>-->
         #if($velocityCount == $currentPage)
@@ -77,5 +93,6 @@
         #end
     #end
 </ul>
-</body>
+<br>
+<footer class="blockquote-footer">This website is powered by Tim's blood, sweat and tears.</footer></body>
 </html>

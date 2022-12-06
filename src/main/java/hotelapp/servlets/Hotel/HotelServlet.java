@@ -71,6 +71,7 @@ public class HotelServlet extends HttpServlet {
         VelocityEngine v = (VelocityEngine) request.getServletContext().getAttribute("templateEngine");
         //VelocityContext context = contextHandler(hotel, averageRating, rating, parsedReviews, ratingError, reviewToBeEdited, bookingStatus, reviews);
         String currentPage = (String) session.getAttribute("reviewPage");
+        session.setAttribute("reviewPage", "1");
         VelocityContext context = contextHandler(hotel, averageRating, rating, ratingError, reviewToBeEdited, bookingStatus, reviews, pages, currentPage);
         session.removeAttribute("BookingStatus");
 

@@ -142,6 +142,47 @@ public class HotelDatabaseHandler {
         return queryResult;
     }
 
+    public List<Hotel> getHotels(String query) {
+        Connection dbConnection = dbHandler.getConnection();
+        if (dbConnection == null) {
+            System.out.println("Unable to connect to database.");
+            return new ArrayList<>();
+        }
+
+        List<Hotel> hotels = new ArrayList<>();
+        try {
+            PreparedStatement statement;
+            if (query.equals("")) {
+                statement = dbConnection.prepareStatement(PreparedStatements.GET_ALL_HOTELS);
+            } else {
+                statement = dbConnection.prepareStatement(
+                        PreparedStatements.getHotelByKeyword(query.replaceAll("/+", " ")));
+            }
+
+            ResultSet result = statement.executeQuery();
+            while (result.next()) {
+                hotels.add(
+                        new Hotel(
+                               result.getString(2),
+                               result.getInt(3),
+                               result.getDouble(4),
+                               result.getDouble(5),
+                               result.getString(6),
+                               result.getString(7),
+                               result.getString(8),
+                               result.getString(9)
+                        )
+                );
+            }
+
+            return hotels;
+        } catch (SQLException e) {
+            System.out.println(e.getErrorCode());
+            System.out.println(e.getMessage());
+        }
+        return hotels;
+    }
+
     /**
      * Get an Hotel object by hotel ID
      * @param hotelId is the target hotel ID

@@ -35,22 +35,40 @@
 <!--<a href="/home">Home</a>-->
 
 
-#if($!historyList)
-<form method="post" action="/expedia_history">
-    <input type="submit" value="Clear History">
+<!--#if($!historyList)-->
+<!--<form method="post" action="/expedia_history">-->
+<!--    <input type="submit" value="Clear History">-->
+<!--</form>-->
+<!--<table>-->
+<!--    <tr>-->
+<!--        <td>Hotel</td>-->
+<!--        <td>Time</td>-->
+<!--    </tr>-->
+<!--    #foreach($history in $historyList)-->
+<!--        <tr>-->
+<!--            <td><a href=/expedia?hotelId=$history.hotelId() target="_blank">$history.hotelName()</a></td>-->
+<!--            <td>$history.time()</td>-->
+<!--        </tr>-->
+<!--    #end-->
+<!--</table>-->
+<!--#end-->
+
+#if(!$historyList.isEmpty())
+<form class="d-flex" method="post" action="/expedia_history">
+    <button class="btn btn-primary" type="submit">Clear History</button>
 </form>
-<table>
-    <tr>
-        <td>Hotel</td>
-        <td>Time</td>
-    </tr>
     #foreach($history in $historyList)
-        <tr>
-            <td><a href=/expedia?hotelId=$history.hotelId() target="_blank">$history.hotelName()</a></td>
-            <td>$history.time()</td>
-        </tr>
+<div class="card">
+    <div class="card-body">
+        <a href=/expedia?hotelId=$history.hotelId() target="_blank" class="card-title">$history.hotelName()</a>
+        <h6 class="card-subtitle mb-2 text-muted">$history.time().toString().replace('T', ' ')</h6>
+    </div>
+</div>
     #end
-</table>
+#else
+<h4>Knock knock, who's there?</h4>
+<h4>Nobody.</h4>
+<h4>Nobody's there</h4>
 #end
 
 </body>

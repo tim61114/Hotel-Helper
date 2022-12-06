@@ -6,21 +6,26 @@
 </head>
 
 <body>
-<h2>Login</h2>
+<div class="container p-1 my-2">
+    <h2>Login</h2>
+    <form method="post" action="/login" class="needs-validation">
+        <div class="mb-3 mt-3">
+            <label for="username" class="form-label">Username:</label>
+            <input type="text" class="form-control" id="username" placeholder="Enter username" name="username" required>
+            <div class="invalid-feedback">Please fill in your username.</div>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password:</label>
+            <input type="password" class="form-control" id="password" placeholder="Enter password" name="password" required>
+            <div class="invalid-feedback">Please fill in your password.</div>
+        </div>
+        <button type="submit" class="btn btn-primary">Log in </button>
+    </form>
+    <p></p>
+    <footer><a href="/register">Register new account</a></footer>
 
-<form method="post" action="/login" class="needs-validation">
-    <div class="mb-3 mt-3">
-        <label for="username" class="form-label">Username:</label>
-        <input type="text" class="form-control" id="username" placeholder="Enter username" name="username" required>
-        <div class="invalid-feedback">Please fill in your username.</div>
-    </div>
-    <div class="mb-3">
-        <label for="password" class="form-label">Password:</label>
-        <input type="password" class="form-control" id="password" placeholder="Enter password" name="password" required>
-        <div class="invalid-feedback">Please fill in your password.</div>
-    </div>
-    <button type="submit" class="btn btn-primary">Log in </button>
-</form>
+</div>
+
 
 <!--<form method="post" action="/login">-->
 <!--    <h2>Login</h2>-->
@@ -47,7 +52,6 @@
     <strong>Success</strong> $accountRegisterSuccess
 </div>
 #end
-<footer><a href="/register">Register new account</a></footer>
 
 
 </body>

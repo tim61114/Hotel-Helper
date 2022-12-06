@@ -21,53 +21,64 @@
                     <a class="nav-link" href="/expedia_history">Expedia History</a>
                 </li>
             </ul>
-            <form class="d-flex" method="post" action="/search">
+            <form class="d-inline-flex p-2" method="post" action="/search">
                 <input class="form-control me-2" type="text" placeholder="Search for Hotels" name="searchColumn">
                 <button class="btn btn-primary" type="submit">Search</button>
             </form>
-            <form class="d-flex" method="post" action="/logout">
-                <button class="btn btn-primary" type="submit">Logout</button>
+            <form class="d-inline-flex p-2" method="post" action="/logout">
+                <button class="btn btn-dark" type="submit">Logout</button>
             </form>
         </div>
     </div>
 </nav>
-<!--<a href="/home">Home</a> | <a href="/booking">Manage your bookings</a>-->
 
-<h3>$hotel.name()</h3>
-<p>Hotel Address: $hotel.addr(), $hotel.city(), $hotel.state()  $Expedia</p>
-<p class="-summary">Average Rating: $avgRating</p>
 
-<h4>Book this hotel</h4>
-<form method="post" action="/booking" id="bookingForm">
-    <div class="row">
-        <div class="col-sm-1">
-            <label >Start date</label>
+
+<div class="container p-5 my-2 bg-dark text-white">
+    <h3>$hotel.name()</h3>
+    <p>Hotel Address: $hotel.addr(), $hotel.city(), $hotel.state()  $Expedia</p>
+    <p class="-summary">Average Rating: $avgRating</p>
+
+</div>
+
+<!--<h3>$hotel.name()</h3>-->
+<!--<p>Hotel Address: $hotel.addr(), $hotel.city(), $hotel.state()  $Expedia</p>-->
+<!--<p class="-summary">Average Rating: $avgRating</p>-->
+
+<div class="container p-3 my-2">
+    <h4>Book this hotel</h4>
+    <form method="post" action="/booking" id="bookingForm">
+        <div class="row">
+            <div class="col-md">
+                <label >Start date</label>
+            </div>
+            <div class="col-sm">
+                <input type="date" id="start" name="startDate" min="2022-11-20" max="2023-02-28" class="form-control" name="startDate" required>
+            </div>
+            <div class="col-md">
+                <label class="form-label">End date</label>
+            </div>
+            <div class="col-sm">
+                <input type="date" id="end" name="endDate" min="2022-11-20" max="2023-02-28" class="form-control" name="endDate" required>
+            </div>
+            <div class="col-sm-1">
+                <label class="form-label">Rooms</label>
+            </div>
+            <div class="col-sm-1">
+                <select class="form-select" name="numDays">
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                </select>
+            </div>
+            <div class="col-sm-1">
+                <input type="submit" class="btn btn-success" value="Book">
+            </div>
         </div>
-        <div class="col-sm">
-            <input type="date" id="start" name="startDate" min="2022-11-20" max="2023-02-28" class="form-control" name="startDate" required>
-        </div>
-        <div class="col-sm-1">
-            <label class="form-label">End date</label>
-        </div>
-        <div class="col-sm">
-            <input type="date" id="end" name="endDate" min="2022-11-20" max="2023-02-28" class="form-control" name="endDate" required>
-        </div>
-        <div class="col-sm-1">
-            <label class="form-label">Rooms</label>
-        </div>
-        <div class="col-sm">
-            <select class="form-select" name="numDays">
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-            </select>
-        </div>
-        <div class="col-sm">
-<!--            <label class="form-label">Number of Rooms</label>-->
-            <input type="submit" class="btn btn-success" value="Book">
-        </div>
-    </div>
-</form>
+    </form>
+</div>
+
+
 
 <!--<form method="post" action="/booking">-->
 <!--    <tr>-->
@@ -92,100 +103,96 @@
 <!--    </tr>-->
 <!--</form>-->
 #if($!BookingError)
-<p style="color:red;">$BookingError</p>
+<div class="alert alert-danger alert-dismissible">
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <strong>Error: </strong> $BookingError
+</div>
 #end
 #if($!BookingSuccess)
-<p style="color:green;">$BookingSuccess</p>
+<div class="alert alert-success alert-dismissible">
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <strong>Success: </strong> $BookingSuccess
+</div>
 #end
-<h1>&nbsp;</h1>
-
-<!--<table style="width:100%" class="table">-->
-<!--    <tr>-->
-<!--        <td style="width:25%">Number of Reviews: $rating.numReviews()</td>-->
-<!--        <td style="width:25%">Average Rating: $rating.avgRating() /5</td>-->
-<!--        <td style="width:25%">Cleanliness: $rating.cleanliness() /5</td>-->
-<!--        <td style="width:25%">Service: $rating.service() /5</td>-->
-<!--    </tr>-->
-<!--    <tr>-->
-<!--        <td style="width:25%">Room Comfort: $rating.roomComfort() /5</td>-->
-<!--        <td style="width:25%">Hotel Condition: $rating.hotelCondition() /5</td>-->
-<!--        <td style="width:25%">Convenience: $rating.convenience() /5</td>-->
-<!--        <td style="width:25%">Neighborhood: $rating.neighborhood() /5</td>-->
-<!--    </tr>-->
-<!--</table>-->
-
-<h4>Add New Review</h4>
-<form method="post" action="/review" id="reviewForm">
-    <div class="row">
-        <div class="col-6">
-            <label class="form-label">Title</label>
-            #if($!title)
-            <input type="text" class="form-control" placeholder="Enter title" name="title" value=$title required>
-            #else
-            <input type="text" class="form-control" placeholder="Enter title" name="title" required>
-            #end
+<div class="container p-3 my-2">
+    <h4>Add New Review</h4>
+    <form method="post" action="/review" id="reviewForm">
+        <div class="row">
+            <div class="col-8">
+                <label class="form-label">Title</label>
+                #if($!title)
+                <input type="text" class="form-control" placeholder="Enter title" name="title" value=$title required>
+                #else
+                <input type="text" class="form-control" placeholder="Enter title" name="title" required>
+                #end
+            </div>
+            <div class="col-1">
+                <label class="form-label">Rating</label>
+                #if($!prev_rating)
+                <input type="range" class="form-range" min="1" max="5" name="rating" value=$prev_rating>
+                #else
+                <input type="range" class="form-range" min="1" max="5" name="rating" value="5">
+                #end
+                <!--            <input type="text" class="form-control" placeholder="Enter rating" name="rating">-->
+            </div>
         </div>
-        <div class="col-1">
-            <label class="form-label">Rating</label>
-            #if($!prev_rating)
-            <input type="range" class="form-range" min="1" max="5" name="rating" value=$prev_rating>
-            #else
-            <input type="range" class="form-range" min="1" max="5" name="rating" value="5">
-            #end
-<!--            <input type="text" class="form-control" placeholder="Enter rating" name="rating">-->
-        </div>
-    </div>
-</form>
-<div class="col-8">
-<label for="comment">Comments:</label>
-<textarea class="form-control" rows="5" id="comment" name="comment" form="reviewForm" placeholder="Add comments here">
+    </form>
+    <div class="col-12">
+        <label for="comment">Comments:</label>
+        <textarea class="form-control" rows="5" id="comment" name="comment" form="reviewForm" placeholder="Add comments here">
 #if($!comments)
 $comments
 #end
 </textarea>
-</div>
-<input type="submit" class="btn btn-success" value="Submit" form="reviewForm">
+    </div>
+    <p></p>
+    <input type="submit" class="btn btn-success" value="Submit" form="reviewForm">
 
+
+</div>
 
 #if($!RatingError)
 <p style="color:red;">$RatingError</p>
 #end
 
-<h1>&nbsp;</h1>
-<h3>Reviews </h3>
-<br>
-#foreach($r in $rawReviews)
-<div class="card">
-    <div class="card-body">
-        #if($r.title() == "")
-        <h4 class="card-title">No title</h4>
-        #else
-        <h4 class="card-title">$r.title()</h4>
-        #end
-        <h6 class="card-subtitle mb-2 text-muted">$r.username(), $r.reviewDate().toString().replace('T', ' ')</h6>
-
-        <div class="row">
-            <div class="col-10">
-                <p class="card-text">$r.reviewText()</p>
-            </div>
-            #if($r.editable() && !$editMode)
-            <div class="col-1">
-                <form action=/edit?reviewId=$r.reviewId() method="post">
-                    <button type="submit" class="btn btn-primary btn-sm">Edit</button>
-                </form>
-            </div>
-            <div class="col-1">
-                <form action=/delete?reviewId=$r.reviewId() method="post">
-                    <button type="submit" class="btn btn-primary btn-sm">Delete</button>
-                </form>
-            </div>
+<div class="container p-3 my-2">
+    <h3>Reviews </h3>
+    <br>
+    #foreach($r in $rawReviews)
+    <div class="card">
+        <div class="card-body">
+            #if($r.title() == "")
+            <h4 class="card-title">No title</h4>
+            #else
+            <h4 class="card-title">$r.title()</h4>
             #end
+            <h6 class="card-subtitle mb-2 text-muted">$r.username(), $r.reviewDate().toString().replace('T', ' ')</h6>
+
+            <div class="row">
+                <div class="col-10">
+                    <p class="card-text">$r.reviewText()</p>
+                </div>
+                #if($r.editable() && !$editMode)
+                <div class="col-1">
+                    <form action=/edit?reviewId=$r.reviewId() method="post">
+                        <button type="submit" class="btn btn-primary btn-sm">Edit</button>
+                    </form>
+                </div>
+                <div class="col-1">
+                    <form action=/delete?reviewId=$r.reviewId() method="post">
+                        <button type="submit" class="btn btn-primary btn-sm">Delete</button>
+                    </form>
+                </div>
+                #end
+            </div>
         </div>
     </div>
-</div>
-#end
+    #end
 
-<ul class="pagination">
+</div>
+
+
+<ul class="pagination justify-content-center">
     #foreach($pagelink in $pages)
     <!--    <p>$pagelink</p>-->
     #if($velocityCount == $currentPage)

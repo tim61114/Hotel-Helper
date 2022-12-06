@@ -21,12 +21,12 @@
                     <a class="nav-link" href="/expedia_history">Expedia History</a>
                 </li>
             </ul>
-            <form class="d-flex" method="post" action="/search">
+            <form class="d-inline-flex p-2" method="post" action="/search">
                 <input class="form-control me-2" type="text" placeholder="Search for Hotels" name="searchColumn">
                 <button class="btn btn-primary" type="submit">Search</button>
             </form>
-            <form class="d-flex" method="post" action="/logout">
-                <button class="btn btn-primary" type="submit">Logout</button>
+            <form class="d-inline-flex p-2" method="post" action="/logout">
+                <button class="btn btn-dark" type="submit">Logout</button>
             </form>
         </div>
     </div>
@@ -39,24 +39,46 @@
 
 <h3>Your Bookings</h3>
 #if($!removeBookingError)
-<p style="color:red;">$removeBookingError</p>
+<div class="alert alert-danger alert-dismissible">
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <strong>Error</strong> $removeBookingError
+</div>
 #end
 #if($!removeBookingSuccess)
-<p style="color:green;">$removeBookingSuccess</p>
+<div class="alert alert-success alert-dismissible">
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <strong>Success</strong> $removeBookingSuccess
+</div>
 #end
-<table>
-    <tr>
-        <td>Hotel</td>
-        <td>Starting Date</td>
-        <td>Ending Date</td>
-        <td>Number of Rooms</td>
-        <td>Time booked</td>
-        <td>Delete booking</td>
-    </tr>
-    #foreach($booking in $bookings)
-    $booking
-    #end
-</table>
+<!--<table>-->
+<!--    <tr>-->
+<!--        <td>Hotel</td>-->
+<!--        <td>Starting Date</td>-->
+<!--        <td>Ending Date</td>-->
+<!--        <td>Number of Rooms</td>-->
+<!--        <td>Time booked</td>-->
+<!--        <td>Delete booking</td>-->
+<!--    </tr>-->
+<!--    #foreach($booking in $bookings)-->
+<!--    $booking-->
+<!--    #end-->
+<!--</table>-->
+
+#foreach($booking in $bookings)
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title"><a href=/hotel?hotelId=$booking.hotelId()>$booking.hotelName()</a></h4>
+        <h6 class="card-subtitle mb-2 text-muted">Booked at $booking.timeBooked().toString().replaceAll('T', ' ')</h6>
+        <h6 class="card-subtitle mb-2">$booking.numRooms() room(s) from $booking.startDate() to $booking.endDate() </h6>
+
+        <div class="col-2">
+            <form action=/delete_booking?booking_id=$booking.bookingId() method="post">
+                <button type="submit" class="btn btn-primary btn-sm">Delete this booking</button>
+            </form>
+        </div>
+    </div>
+</div>
+#end
 
 </body>
 </html>
