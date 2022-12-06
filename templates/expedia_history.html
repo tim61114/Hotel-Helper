@@ -52,24 +52,28 @@
 <!--    #end-->
 <!--</table>-->
 <!--#end-->
-
-#if(!$historyList.isEmpty())
-<form class="d-flex" method="post" action="/expedia_history">
-    <button class="btn btn-primary" type="submit">Clear History</button>
-</form>
+<div class="container p-1 my-2">
+    <h3>Expedia History</h3>
+    #if(!$historyList.isEmpty())
+    <form class="d-flex" method="post" action="/expedia_history">
+        <button class="btn btn-primary" type="submit">Clear History</button>
+    </form>
+    <p></p>
     #foreach($history in $historyList)
-<div class="card">
-    <div class="card-body">
-        <a href=/expedia?hotelId=$history.hotelId() target="_blank" class="card-title">$history.hotelName()</a>
-        <h6 class="card-subtitle mb-2 text-muted">$history.time().toString().replace('T', ' ')</h6>
+    <div class="card">
+        <div class="card-body">
+            <a href=/expedia?hotelId=$history.hotelId() target="_blank" class="card-title">$history.hotelName()</a>
+            <h6 class="card-subtitle mb-2 text-muted">$history.time().toString().replace('T', ' ')</h6>
+        </div>
     </div>
-</div>
     #end
-#else
-<h4>Knock knock, who's there?</h4>
-<h4>Nobody.</h4>
-<h4>Nobody's there</h4>
-#end
+    #else
+    <h4>Knock knock, who's there?</h4>
+    <h4>Nobody.</h4>
+    <h4>Nobody's there</h4>
+    #end
+</div>
+
 
 </body>
 </html>

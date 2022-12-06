@@ -22,10 +22,10 @@ public class VisitExpediaServlet extends HttpServlet {
         }
 
         String hotelId = request.getParameter("hotelId");
+        response.sendRedirect("https://www.expedia.com/h" + hotelId + ".Hotel-Information");
         HotelDatabaseHandler hotelHandler = new HotelDatabaseHandler();
         String username = userJson.get("username").getAsString();
         hotelHandler.addUserExpediaHistory(username, Integer.parseInt(hotelId), LocalDateTime.now());
-        response.sendRedirect("https://www.expedia.com/h" + hotelId + ".Hotel-Information");
 
     }
 }

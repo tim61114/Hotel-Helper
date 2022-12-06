@@ -35,24 +35,42 @@
 <!--    <input type="submit" value="Home">-->
 <!--</form>-->
 
-<p>Search result for <b>$keyword</b></p>
-<table>
-    <tr>
-        <td>Hotel</td>
-        <td>Address</td>
-        <td>City</td>
-        <td>State</td>
-        <td>Country</td>
-    </tr>
+<!--<p>Search result for <b>$keyword</b></p>-->
+<!--<table>-->
+<!--    <tr>-->
+<!--        <td>Hotel</td>-->
+<!--        <td>Address</td>-->
+<!--        <td>City</td>-->
+<!--        <td>State</td>-->
+<!--        <td>Country</td>-->
+<!--    </tr>-->
+<!--    #foreach($hotel in $hotels)-->
+<!--    $hotel-->
+<!--    #end-->
+<!--</table>-->
+
+<div class="container p-3 my-1">
+#if(!$hotels.isEmpty())
+    <h3>Search result for <b>$keyword</b></h3>
+
     #foreach($hotel in $hotels)
-    $hotel
+    <div class="card">
+        <div class="card-body">
+            <a href=/hotel?hotelId=$hotel.hotelId() class="card-title">$hotel.name()</a>
+            <h6 class="card-subtitle mb-2 text-muted">$hotel.addr(), $hotel.city(), $hotel.state()</h6>
+        </div>
+    </div>
     #end
-</table>
+#else
+    <h3>No result found for <b>$keyword</b>.</h3>
+#end
+</div>
+
 <!--#foreach($pagelink in $pages)-->
 <!--$pagelink-->
 <!--#end-->
 
-<ul class="pagination">
+<ul class="pagination justify-content-center">
     #foreach($pagelink in $pages)
         #if($velocityCount == $currentPage)
         <li class="page-item active"><a class="page-link" href=$pagelink>$velocityCount</a></li>
@@ -61,5 +79,6 @@
         #end
     #end
 </ul>
+
 </body>
 </html>

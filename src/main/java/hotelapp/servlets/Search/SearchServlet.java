@@ -2,6 +2,7 @@ package hotelapp.servlets.Search;
 
 import com.google.gson.JsonObject;
 import hotelapp.Database.HotelDatabaseHandler;
+import hotelapp.Model.Hotel;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -18,7 +19,7 @@ import java.util.List;
 
 public class SearchServlet extends HttpServlet {
 
-    private static final int HOTEL_PER_PAGE = 20;
+    private static final int HOTEL_PER_PAGE = 10;
     private final HotelDatabaseHandler hotelHandler = new HotelDatabaseHandler();
 
     @Override
@@ -47,10 +48,11 @@ public class SearchServlet extends HttpServlet {
             searchPageNum = Integer.parseInt(searchPageNumString);
         }
 
-        List<String> searchResult = hotelHandler.getProcessedHotels(keyword);
+        //List<String> searchResult = hotelHandler.getProcessedHotels(keyword);
+        List<Hotel> searchResult = hotelHandler.getHotels(keyword);
         int totalPages = searchResult.size() / HOTEL_PER_PAGE;
 
-        List<String> resultTable = searchResult.stream()
+        List<Hotel> resultTable = searchResult.stream()
                 .skip((long) (searchPageNum - 1) * HOTEL_PER_PAGE)
                 .limit(HOTEL_PER_PAGE)
                 .toList();

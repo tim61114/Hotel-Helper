@@ -36,49 +36,39 @@
 <!--<form method="post" action="/logout">-->
 <!--    <input type="submit" value="Logout">-->
 <!--</form>-->
+<div class="container p-1 my-2">
+    <h3>My Bookings</h3>
+    #if($!removeBookingError)
+    <div class="alert alert-danger alert-dismissible">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <strong>Error</strong> $removeBookingError
+    </div>
+    #end
+    #if($!removeBookingSuccess)
+    <div class="alert alert-success alert-dismissible">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <strong>Success</strong> $removeBookingSuccess
+    </div>
+    #end
 
-<h3>Your Bookings</h3>
-#if($!removeBookingError)
-<div class="alert alert-danger alert-dismissible">
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    <strong>Error</strong> $removeBookingError
-</div>
-#end
-#if($!removeBookingSuccess)
-<div class="alert alert-success alert-dismissible">
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    <strong>Success</strong> $removeBookingSuccess
-</div>
-#end
-<!--<table>-->
-<!--    <tr>-->
-<!--        <td>Hotel</td>-->
-<!--        <td>Starting Date</td>-->
-<!--        <td>Ending Date</td>-->
-<!--        <td>Number of Rooms</td>-->
-<!--        <td>Time booked</td>-->
-<!--        <td>Delete booking</td>-->
-<!--    </tr>-->
-<!--    #foreach($booking in $bookings)-->
-<!--    $booking-->
-<!--    #end-->
-<!--</table>-->
 
-#foreach($booking in $bookings)
-<div class="card">
-    <div class="card-body">
-        <h4 class="card-title"><a href=/hotel?hotelId=$booking.hotelId()>$booking.hotelName()</a></h4>
-        <h6 class="card-subtitle mb-2 text-muted">Booked at $booking.timeBooked().toString().replaceAll('T', ' ')</h6>
-        <h6 class="card-subtitle mb-2">$booking.numRooms() room(s) from $booking.startDate() to $booking.endDate() </h6>
+    #foreach($booking in $bookings)
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title"><a href=/hotel?hotelId=$booking.hotelId()>$booking.hotelName()</a></h4>
+            <h6 class="card-subtitle mb-2 text-muted">Booked at $booking.timeBooked().toString().replaceAll('T', ' ')</h6>
+            <h6 class="card-subtitle mb-2">$booking.numRooms() room(s) from $booking.startDate() to $booking.endDate() </h6>
 
-        <div class="col-2">
-            <form action=/delete_booking?booking_id=$booking.bookingId() method="post">
-                <button type="submit" class="btn btn-primary btn-sm">Delete this booking</button>
-            </form>
+            <div class="col-2">
+                <form action=/delete_booking?booking_id=$booking.bookingId() method="post">
+                    <button type="submit" class="btn btn-primary btn-sm">Delete this booking</button>
+                </form>
+            </div>
         </div>
     </div>
+    #end
+
 </div>
-#end
 
 </body>
 </html>
