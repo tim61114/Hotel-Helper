@@ -59,8 +59,7 @@ public class SearchServlet extends HttpServlet {
 
         List<String> pages = new ArrayList<>();
         for (int i = 1; i <= totalPages + 1; i++) {
-            //pages.add("<a href=\"/search?keyword=" + keyword + "&searchPage=" + i + "\">" + i + "</a>");
-            pages.add("/search?keyword=" + keyword + "&searchPage=" + i);
+            pages.add("/search?keyword=" + keyword.replaceAll(" ", "+") + "&searchPage=" + i);
         }
         PrintWriter out = response.getWriter();
         response.setContentType("text/html");

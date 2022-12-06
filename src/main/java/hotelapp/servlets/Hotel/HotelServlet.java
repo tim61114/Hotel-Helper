@@ -139,14 +139,13 @@ public class HotelServlet extends HttpServlet {
      * @return the VelocityContext to be merged
      */
     private VelocityContext contextHandler(Hotel hotel, double averageRating, Rating rating, //List<String> reviews,
-                                           boolean ratingError, Review review, String bookingStatus, List<Review> rawReviews, List<String> pages, String pageNum) {
+                                           boolean ratingError, Review review, String bookingStatus, List<Review> reviews, List<String> pages, String pageNum) {
         VelocityContext context = new VelocityContext();
         context.put("rating", rating);
         context.put("hotel", hotel);
-        //context.put("reviews", reviews);
         context.put("avgRating", averageRating);
         context.put("Expedia", "<a href=\"/expedia?hotelId=" + hotel.hotelId() +"\" target=\"_blank\">Expedia</a>");
-        context.put("rawReviews", rawReviews);
+        context.put("reviews", reviews);
         context.put("editMode", review != null);
         context.put("pages", pages);
         context.put("currentPage", pageNum == null ? 1 : Integer.parseInt(pageNum));
