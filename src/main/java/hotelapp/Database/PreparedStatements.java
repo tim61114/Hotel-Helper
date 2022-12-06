@@ -172,10 +172,24 @@ public class PreparedStatements {
             "SELECT hotel_name, a.* FROM hotels INNER JOIN (SELECT * FROM bookings WHERE username = ?) a on a.hotel_id = hotels.hotel_id ORDER BY startDate ASC";
 
     public static final String GET_BOOKING_BY_BOOKING_ID =
-            "SELECT hotel_name, a.* FROM hotels INNER JOIN (SELECT * FROM bookings WHERE booking_id = ?) a on a.hotel_id = hotels.hotel_id";
+            "SELECT hotel_name, a.* FROM hotels INNER JOIN (SELECT * FROM bookings WHERE booking_id = ?) a ON a.hotel_id = hotels.hotel_id";
 
     public static final String DELETE_BOOKING =
             "DELETE FROM bookings WHERE booking_id = ?";
 
 
+    public static final String CREATE_FAVORITES_TABLE =
+            "CREATE TABLE favorites (" +
+                    "id INTEGER AUTO_INCREMENT PRIMARY KEY, " +
+                    "hotel_id INTEGER NOT NULL, " +
+                    "username VARCHAR(20) NOT NULL)";
+
+    public static final String DROP_FAVORITES_TABLE =
+            "DROP TABLE favorites";
+
+    public static final String CHECK_IS_FAVORITE_HOTEL =
+            "SELECT * FROM favorites WHERE hotel_id = ? AND username = ?";
+
+    public static final String GET_USER_FAVORITES =
+            "SELECT hotels.* FROM hotels INNER JOIN (SELECT * FROM favorites WHERE username = ?) a ON a.hotel_id = hotels.hotel_id";
 }
