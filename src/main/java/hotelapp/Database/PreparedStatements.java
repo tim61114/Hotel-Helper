@@ -202,4 +202,26 @@ public class PreparedStatements {
 
     public static final String GET_USER_FAVORITES =
             "SELECT hotels.* FROM hotels INNER JOIN (SELECT * FROM favorites WHERE username = ?) a ON a.hotel_id = hotels.hotel_id";
+
+    public static final String CREATE_LIKE_REVIEW_TABLE =
+            "CREATE TABLE liked_reviews (" +
+                    "id INTEGER AUTO_INCREMENT PRIMARY KEY, " +
+                    "username VARCHAR(20) NOT NULL, " +
+                    "review_id VARCHAR(32) NOT NULL)";
+
+    public static final String DROP_LIKE_REVIEW_TABLE =
+            "DROP TABLE liked_reviews";
+
+    public static final String CHECK_REVIEW_LIKED =
+            "SELECT * FROM liked_reviews WHERE username = ? AND review_id = ?";
+
+    public static final String ADD_USER_LIKE =
+            "INSERT INTO liked_reviews (username, review_id) " +
+                    "VALUES(?, ?)";
+
+    public static final String DELETE_USER_LIKE =
+            "DELETE FROM liked_reviews WHERE username = ? AND review_id = ?";
+
+    public static final String CHECK_NUM_LIKES =
+            "SELECT COUNT(*) FROM liked_reviews WHERE review_id = ?";
 }

@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="style.css"/>
     <script src="getWeather.js"></script>
     <script src="favoriteScript.js"></script>
+    <script src="LikeReviewScript.js"></script>
 
 </head>
 <body>
@@ -162,11 +163,15 @@ $comments
             #end
             <h6 class="card-subtitle mb-2 text-muted">$r.username(), $r.reviewDate().toString().replace('T', ' ')</h6>
             <div class="row">
-                <div class="col-9">
+                <div class="col-8">
                     <p class="card-text">$r.reviewText()</p>
                 </div>
                 <div class="col-1">
                     <p class="card-text text-muted">$r.rating() Star</p>
+                </div>
+                <div class="col-1">
+                    <script>checkLikeReview("$r.reviewId()")</script>
+                    <button id=$r.reviewId() class="btn btn-primary btn-sm" onclick='likeOrUnlikeReview("$r.reviewId()")'></button>
                 </div>
                 #if($r.editable() && !$editMode)
                 <div class="col-1">
@@ -181,6 +186,10 @@ $comments
                 </div>
                 #end
             </div>
+        </div>
+        <div class="card-footer" id="review_footer">
+            <script>getLikes("$r.reviewId()")</script>
+            <p id=helpful$r.reviewId()></p>
         </div>
     </div>
     #end

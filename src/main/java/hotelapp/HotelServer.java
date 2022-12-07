@@ -7,9 +7,7 @@ import hotelapp.servlets.Hotel.*;
 import hotelapp.servlets.LoginAndRegistration.LoginServiceServlet;
 import hotelapp.servlets.LoginAndRegistration.LogoutServlet;
 import hotelapp.servlets.LoginAndRegistration.RegistrationServlet;
-import hotelapp.servlets.Reviews.AddReviewServlet;
-import hotelapp.servlets.Reviews.DeleteReviewServlet;
-import hotelapp.servlets.Reviews.EditReviewServlet;
+import hotelapp.servlets.Reviews.*;
 import hotelapp.servlets.Search.SearchServlet;
 import org.apache.velocity.app.VelocityEngine;
 import org.eclipse.jetty.server.Handler;
@@ -62,6 +60,8 @@ public class HotelServer {
 		servletHandler.addServlet(FavoritesServlet.class, "/favorites");
 		servletHandler.addServlet(CheckIsFavoriteServlet.class, "/check_favorite");
 		servletHandler.addServlet(DeleteFavoriteServlet.class, "/delete_favorites");
+		servletHandler.addServlet(LikeReviewServlet.class, "/like_review");
+		servletHandler.addServlet(ReviewLikeNumServlet.class, "/review_num_likes");
 
 		ResourceHandler resourceHandler = new ResourceHandler(); // a handler for serving static pages
 		resourceHandler.setDirectoriesListed(true);
