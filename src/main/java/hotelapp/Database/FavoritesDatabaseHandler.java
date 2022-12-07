@@ -59,6 +59,32 @@ public class FavoritesDatabaseHandler {
         return true;
     }
 
+    public void flipHotel(String username, int hotelId) {
+        Connection dbConnection = dbHandler.getConnection();
+        if (dbConnection == null) {
+            System.out.println("Unable to connect to database.");
+            return;
+        }
+
+        try {
+            PreparedStatement statement;
+            if (isFavorite(username, hotelId)) {
+                statement = dbConnection.prepareStatement(PreparedStatements.DELETE_FAVORITE);
+            } else {
+                statement = dbConnection.prepareStatement(PreparedStatements.ADD_FAVORITE);
+            }
+            statement.setInt(1, hotelId);
+            statement.setString(2, username);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            if (e.getErrorCode() == DatabaseErrorCodes.TABLE_DOES_NOT_EXIST) {
+                System.out.println("Table favorites does not exist.");
+            } else {
+                System.out.println("An error occurred.");
+            }
+        }
+    }
+
     public boolean isFavorite(String username, int hotelId) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -121,7 +147,25 @@ public class FavoritesDatabaseHandler {
 
     }
 
+    public void removeAllFavorites(String username) {
+        Connection dbConnection = dbHandler.getConnection();
+        if (dbConnection == null) {
+            System.out.println("Unable to connect to database.");
+            return;
+        }
 
+        try {
+            PreparedStatement statement = dbConnection.prepareStatement(PreparedStatements.DELETE_USER_FAVORITE);
+            statement.setString(1, username);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            if (e.getErrorCode() == DatabaseErrorCodes.TABLE_DOES_NOT_EXIST) {
+                System.out.println("Table favorites does not exist.");
+            } else {
+                System.out.println("An error occurred.");
+            }
+        }
+    }
 
     public static void main(String[] args) {
         FavoritesDatabaseHandler favoritesHandler = new FavoritesDatabaseHandler();

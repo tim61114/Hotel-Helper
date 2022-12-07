@@ -48,6 +48,17 @@ public class FavoritesServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        String username = ((JsonObject) session.getAttribute("loginInfo")).get("username").getAsString();
+        String currentHotel = (String) session.getAttribute("currentHotel");
+        if (username == null || currentHotel == null) {
+            response.sendRedirect("/home");
+            return;
+        }
+
+        FavoritesDatabaseHandler favoritesHandler = new FavoritesDatabaseHandler();
+        favoritesHandler.flipHotel(username, Integer.parseInt(currentHotel));
+
     }
 
     private boolean redirectHandler(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -58,13 +69,6 @@ public class FavoritesServlet extends HttpServlet {
             return true;
         }
 
-        String hotelId = request.getParameter("hotelId");
-        if (hotelId == null) {
-            response.sendRedirect("/home");
-            return true;
-        }
-
         return false;
-
     }
 }

@@ -3,10 +3,7 @@ package hotelapp;
 import hotelapp.servlets.Booking.BookingServlet;
 import hotelapp.servlets.Booking.DeleteBookingServlet;
 import hotelapp.servlets.Home.HomeServlet;
-import hotelapp.servlets.Hotel.ExpediaHistoryServlet;
-import hotelapp.servlets.Hotel.HotelCoordinatesServlet;
-import hotelapp.servlets.Hotel.VisitExpediaServlet;
-import hotelapp.servlets.Hotel.HotelServlet;
+import hotelapp.servlets.Hotel.*;
 import hotelapp.servlets.LoginAndRegistration.LoginServiceServlet;
 import hotelapp.servlets.LoginAndRegistration.LogoutServlet;
 import hotelapp.servlets.LoginAndRegistration.RegistrationServlet;
@@ -62,6 +59,9 @@ public class HotelServer {
 		servletHandler.addServlet(VisitExpediaServlet.class, "/expedia");
 		servletHandler.addServlet(ExpediaHistoryServlet.class, "/expedia_history");
 		servletHandler.addServlet(HotelCoordinatesServlet.class, "/coor");
+		servletHandler.addServlet(FavoritesServlet.class, "/favorites");
+		servletHandler.addServlet(CheckIsFavoriteServlet.class, "/check_favorite");
+		servletHandler.addServlet(DeleteFavoriteServlet.class, "/delete_favorites");
 
 		ResourceHandler resourceHandler = new ResourceHandler(); // a handler for serving static pages
 		resourceHandler.setDirectoriesListed(true);

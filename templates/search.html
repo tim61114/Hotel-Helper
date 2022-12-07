@@ -20,6 +20,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/expedia_history">Expedia History</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/favorites">My Favorite Hotels</a>
+                </li>
             </ul>
             <form class="d-inline-flex p-2" method="post" action="/search">
                 <input class="form-control me-2" type="text" placeholder="Search for Hotels" name="searchColumn">
@@ -31,23 +34,6 @@
         </div>
     </div>
 </nav>
-<!--<form method="get" action="/home">-->
-<!--    <input type="submit" value="Home">-->
-<!--</form>-->
-
-<!--<p>Search result for <b>$keyword</b></p>-->
-<!--<table>-->
-<!--    <tr>-->
-<!--        <td>Hotel</td>-->
-<!--        <td>Address</td>-->
-<!--        <td>City</td>-->
-<!--        <td>State</td>-->
-<!--        <td>Country</td>-->
-<!--    </tr>-->
-<!--    #foreach($hotel in $hotels)-->
-<!--    $hotel-->
-<!--    #end-->
-<!--</table>-->
 
 <div class="container p-3 my-1">
 #if(!$hotels.isEmpty())
@@ -65,10 +51,6 @@
     <h3>No result found for <b>$keyword</b>.</h3>
 #end
 </div>
-
-<!--#foreach($pagelink in $pages)-->
-<!--$pagelink-->
-<!--#end-->
 
 <ul class="pagination justify-content-center">
     #foreach($pagelink in $pages)

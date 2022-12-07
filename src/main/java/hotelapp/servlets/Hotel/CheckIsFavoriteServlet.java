@@ -31,9 +31,11 @@ public class CheckIsFavoriteServlet extends HttpServlet {
         String username = userJson.get("username").getAsString();
         int hotelId = Integer.parseInt(currentHotel);
 
+//        System.out.println(currentHotel);
+//        System.out.println(favoritesHandler.isFavorite(username, hotelId));
+
         JsonObject result = new JsonObject();
         result.addProperty("isFavorite", favoritesHandler.isFavorite(username, hotelId));
-
         PrintWriter out = response.getWriter();
         out.println(result);
     }

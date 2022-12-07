@@ -184,6 +184,16 @@ public class PreparedStatements {
                     "hotel_id INTEGER NOT NULL, " +
                     "username VARCHAR(20) NOT NULL)";
 
+    public static final String ADD_FAVORITE =
+            "INSERT INTO favorites (hotel_id, username) " +
+                    "VALUES(?, ?)";
+
+    public static final String DELETE_USER_FAVORITE =
+            "DELETE FROM favorites WHERE username = ?";
+
+    public static final String DELETE_FAVORITE =
+            "DELETE FROM favorites WHERE hotel_id = ? AND username = ?";
+
     public static final String DROP_FAVORITES_TABLE =
             "DROP TABLE favorites";
 

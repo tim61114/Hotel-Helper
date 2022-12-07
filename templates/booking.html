@@ -20,6 +20,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/expedia_history">Expedia History</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/favorites">My Favorite Hotels</a>
+                </li>
             </ul>
             <form class="d-inline-flex p-2" method="post" action="/search">
                 <input class="form-control me-2" type="text" placeholder="Search for Hotels" name="searchColumn">
@@ -31,11 +34,7 @@
         </div>
     </div>
 </nav>
-<!--<a href="/home">Home</a>-->
 
-<!--<form method="post" action="/logout">-->
-<!--    <input type="submit" value="Logout">-->
-<!--</form>-->
 <div class="container p-1 my-2">
     <h3>My Bookings</h3>
     #if($!removeBookingError)
