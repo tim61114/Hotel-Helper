@@ -133,14 +133,13 @@ public class HotelServlet extends HttpServlet {
      * @param hotel is the Hotel data
      * @param averageRating is the average rating of the hotel
      * @param rating is the Rating object (Currently not used)
-     //* @param reviews is the List of formatted reviews in HTML form
      * @param ratingError is a flag for sending ratingError messages
      * @param review is the Review to be edited if needed
      * @param bookingStatus is the bookingStatus of the current session
      * @return the VelocityContext to be merged
      */
-    private VelocityContext contextHandler(Hotel hotel, double averageRating, Rating rating, //List<String> reviews,
-                                           boolean ratingError, Review review, String bookingStatus, List<Review> reviews, List<String> pages, String pageNum) {
+    private VelocityContext contextHandler(Hotel hotel, double averageRating, Rating rating, boolean ratingError,
+                                           Review review, String bookingStatus, List<Review> reviews, List<String> pages, String pageNum) {
         VelocityContext context = new VelocityContext();
         context.put("rating", rating);
         context.put("hotel", hotel);

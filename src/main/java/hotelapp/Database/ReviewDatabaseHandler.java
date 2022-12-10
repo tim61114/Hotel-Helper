@@ -141,6 +141,11 @@ public class ReviewDatabaseHandler {
         return Optional.empty();
     }
 
+    /**
+     * get the count of reviews for the current hotel
+     * @param hotelId is the ID of the hotel
+     * @return the number of reviews
+     */
     public int getNumReviewsForHotel(int hotelId) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -292,6 +297,9 @@ public class ReviewDatabaseHandler {
 
     }
 
+    /**
+     * Create a table to store liked reviews
+     */
     public boolean createLikeReviewTable() {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -313,6 +321,9 @@ public class ReviewDatabaseHandler {
         return true;
     }
 
+    /**
+     * drop the like review table
+     */
     public boolean dropLikeReviewTable() {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -335,6 +346,12 @@ public class ReviewDatabaseHandler {
         return true;
     }
 
+    /**
+     * Check if a user liked this review
+     * @param username is the username
+     * @param reviewId is the ID of the review
+     * @return true if yes
+     */
     public boolean checkUserLikesReview(String username, String reviewId) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -359,6 +376,11 @@ public class ReviewDatabaseHandler {
         }
     }
 
+    /**
+     * Add if a review is liked by the current user
+     * @param username is the user
+     * @param reviewId is the ID of the review
+     */
     public void flipLike(String username, String reviewId) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -386,6 +408,11 @@ public class ReviewDatabaseHandler {
         }
     }
 
+    /**
+     * Return the number of likes of a review
+     * @param reviewId is the ID of the review
+     * @return the number of likes
+     */
     public int checkNumLikes(String reviewId) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {

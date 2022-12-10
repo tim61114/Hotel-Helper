@@ -59,6 +59,11 @@ public class FavoritesDatabaseHandler {
         return true;
     }
 
+    /**
+     * Remove the current hotel from favorites if exists, add to the table if it does not.
+     * @param username is the username
+     * @param hotelId is the ID of the hotel
+     */
     public void flipHotel(String username, int hotelId) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -85,6 +90,12 @@ public class FavoritesDatabaseHandler {
         }
     }
 
+    /**
+     * Check if a hotel is favorite-d by the user
+     * @param username is the username
+     * @param hotelId is the ID of the hotel
+     * @return true for yes.
+     */
     public boolean isFavorite(String username, int hotelId) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -107,6 +118,11 @@ public class FavoritesDatabaseHandler {
         }
     }
 
+    /**
+     * Get all hotels the user favorite-d
+     * @param username is the username
+     * @return a list of hotels that is favorite-d by the user
+     */
     public List<Hotel> getFavoriteHotels(String username) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -147,6 +163,10 @@ public class FavoritesDatabaseHandler {
 
     }
 
+    /**
+     * Delete all hotels that are favorite-d by the user
+     * @param username is the username to remove
+     */
     public void removeAllFavorites(String username) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {

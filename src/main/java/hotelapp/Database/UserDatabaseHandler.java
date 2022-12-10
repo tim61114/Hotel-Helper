@@ -193,6 +193,11 @@ public class UserDatabaseHandler {
         return null;
     }
 
+    /**
+     * Update the previous login time of the current user
+     * @param username is the current user
+     * @param time is the login time
+     */
     public void updatePreviousLogin(String username, LocalDateTime time) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {

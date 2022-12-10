@@ -112,7 +112,6 @@ public class HomeServlet extends HttpServlet {
         context.put("username", username);
         context.put("previousLogin", previousLogin.equals("null") ? null : previousLogin.replace('T', ' '));
         context.put("hotels", hotelTable);
-        //context.put("hotels", hotels);
         context.put("pages", pages);
         return context;
     }

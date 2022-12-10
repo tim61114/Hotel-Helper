@@ -303,6 +303,10 @@ public class HotelDatabaseHandler {
         return history;
     }
 
+    /**
+     * Delete the expedia history of the user
+     * @param username is the username
+     */
     public void deleteUserExpediaHistory(String username) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
@@ -320,6 +324,12 @@ public class HotelDatabaseHandler {
         }
     }
 
+    /**
+     * Add a new row to the user's expedia history
+     * @param username is the username
+     * @param hotelId is the hotelId
+     * @param time is the time the user clicked
+     */
     public void addUserExpediaHistory(String username, int hotelId, LocalDateTime time) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {

@@ -48,7 +48,6 @@ public class SearchServlet extends HttpServlet {
             searchPageNum = Integer.parseInt(searchPageNumString);
         }
 
-        //List<String> searchResult = hotelHandler.getProcessedHotels(keyword);
         List<Hotel> searchResult = hotelHandler.getHotels(keyword);
         int totalPages = searchResult.size() / HOTEL_PER_PAGE;
 
