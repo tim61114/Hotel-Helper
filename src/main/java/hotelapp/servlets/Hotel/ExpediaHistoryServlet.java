@@ -54,6 +54,6 @@ public class ExpediaHistoryServlet extends HttpServlet {
         String username = userJson.get("username").getAsString();
         HotelDatabaseHandler hotelDatabaseHandler = new HotelDatabaseHandler();
         hotelDatabaseHandler.deleteUserExpediaHistory(username);
-        response.sendRedirect("/home");
+        response.sendRedirect("/expedia_history");
     }
 }

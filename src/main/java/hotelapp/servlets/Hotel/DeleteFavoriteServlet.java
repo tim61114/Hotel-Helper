@@ -19,6 +19,6 @@ public class DeleteFavoriteServlet extends HttpServlet {
         FavoritesDatabaseHandler favoritesHandler = new FavoritesDatabaseHandler();
         favoritesHandler.removeAllFavorites(username);
 
-        response.sendRedirect("/home");
+        response.sendRedirect("/favorites");
     }
 }
