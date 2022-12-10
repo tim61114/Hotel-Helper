@@ -2,6 +2,7 @@ package hotelapp.servlets.Search;
 
 import com.google.gson.JsonObject;
 import hotelapp.Database.HotelDatabaseHandler;
+import hotelapp.Model.Hotel;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -18,7 +19,7 @@ import java.util.List;
 
 public class SearchServlet extends HttpServlet {
 
-    private static final int HOTEL_PER_PAGE = 20;
+    private static final int HOTEL_PER_PAGE = 10;
     private final HotelDatabaseHandler hotelHandler = new HotelDatabaseHandler();
 
     @Override
@@ -47,17 +48,17 @@ public class SearchServlet extends HttpServlet {
             searchPageNum = Integer.parseInt(searchPageNumString);
         }
 
-        List<String> searchResult = hotelHandler.getProcessedHotels(keyword);
+        List<Hotel> searchResult = hotelHandler.getHotels(keyword);
         int totalPages = searchResult.size() / HOTEL_PER_PAGE;
 
-        List<String> resultTable = searchResult.stream()
+        List<Hotel> resultTable = searchResult.stream()
                 .skip((long) (searchPageNum - 1) * HOTEL_PER_PAGE)
                 .limit(HOTEL_PER_PAGE)
                 .toList();
 
         List<String> pages = new ArrayList<>();
         for (int i = 1; i <= totalPages + 1; i++) {
-            pages.add("<a href=\"/search?keyword=" + keyword + "&searchPage=" + i + "\">" + i + "</a>");
+            pages.add("/search?keyword=" + keyword.replaceAll(" ", "+") + "&searchPage=" + i);
         }
         PrintWriter out = response.getWriter();
         response.setContentType("text/html");
@@ -65,6 +66,7 @@ public class SearchServlet extends HttpServlet {
 
         VelocityEngine v = (VelocityEngine) request.getServletContext().getAttribute("templateEngine");
         VelocityContext context = new VelocityContext();
+        context.put("currentPage", searchPageNum);
         context.put("keyword", keyword);
         context.put("hotels", resultTable);
         context.put("pages", pages);

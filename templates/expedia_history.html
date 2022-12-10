@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Bookings</title>
+    <title>Expedia</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"></head>
 </head>
 <body>
@@ -36,38 +36,27 @@
 </nav>
 
 <div class="container p-1 my-2">
-    <h3>My Bookings</h3>
-    #if($!removeBookingError)
-    <div class="alert alert-danger alert-dismissible">
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        <strong>Error</strong> $removeBookingError
-    </div>
-    #end
-    #if($!removeBookingSuccess)
-    <div class="alert alert-success alert-dismissible">
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        <strong>Success</strong> $removeBookingSuccess
-    </div>
-    #end
-
-
-    #foreach($booking in $bookings)
+    <h3>Expedia History</h3>
+    #if(!$historyList.isEmpty())
+    <form class="d-flex" method="post" action="/expedia_history">
+        <button class="btn btn-primary" type="submit">Clear History</button>
+    </form>
+    <p></p>
+    #foreach($history in $historyList)
     <div class="card">
         <div class="card-body">
-            <h4 class="card-title"><a href=/hotel?hotelId=$booking.hotelId()>$booking.hotelName()</a></h4>
-            <h6 class="card-subtitle mb-2 text-muted">Booked at $booking.timeBooked().toString().replaceAll('T', ' ')</h6>
-            <h6 class="card-subtitle mb-2">$booking.numRooms() room(s) from $booking.startDate() to $booking.endDate() </h6>
-
-            <div class="col-2">
-                <form action=/delete_booking?booking_id=$booking.bookingId() method="post">
-                    <button type="submit" class="btn btn-primary btn-sm">Delete this booking</button>
-                </form>
-            </div>
+            <a href=/expedia?hotelId=$history.hotelId() target="_blank" class="card-title">$history.hotelName()</a>
+            <h6 class="card-subtitle mb-2 text-muted">$history.time().toString().replace('T', ' ')</h6>
         </div>
     </div>
     #end
-
+    #else
+    <h4>Knock knock, who's there?</h4>
+    <h4>Nobody.</h4>
+    <h4>Nobody's there</h4>
+    #end
 </div>
+
 
 </body>
 </html>

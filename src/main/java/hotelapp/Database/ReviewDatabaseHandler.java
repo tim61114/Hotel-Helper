@@ -1,6 +1,5 @@
 package hotelapp.Database;
 
-import hotelapp.Database.LoadData.LoadReviews;
 import hotelapp.Model.Rating;
 import hotelapp.Model.Review;
 
@@ -68,7 +67,7 @@ public class ReviewDatabaseHandler {
      * @param hotelId is the target hotel ID
      * @return a list of Reviews
      */
-    public List<Review> getProcessedReviewsByHotelId(int hotelId) {
+    public List<Review> getReviewsByHotelIdWithOffset(int hotelId, String username, int limit, int offset) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
             System.out.println("Unable to connect to database.");
@@ -78,8 +77,10 @@ public class ReviewDatabaseHandler {
         List<Review> queryResult = new ArrayList<>();
         try {
             PreparedStatement statement;
-            statement = dbConnection.prepareStatement(PreparedStatements.GET_REVIEW_BY_HOTEL_ID);
+            statement = dbConnection.prepareStatement(PreparedStatements.GET_REVIEW_BY_HOTEL_ID_WITH_OFFSET);
             statement.setInt(1, hotelId);
+            statement.setInt(2, limit);
+            statement.setInt(3, offset);
 
             ResultSet result = statement.executeQuery();
             while (result.next()) {
@@ -91,7 +92,8 @@ public class ReviewDatabaseHandler {
                                 result.getString("reviewText"),
                                 result.getString("userNickname"),
                                 result.getTimestamp("reviewDate").toLocalDateTime(),
-                                result.getInt("rating")
+                                result.getInt("rating"),
+                                result.getString("userNickname").equals(username)
                         )
                 );
             }
@@ -137,6 +139,31 @@ public class ReviewDatabaseHandler {
         }
 
         return Optional.empty();
+    }
+
+    /**
+     * get the count of reviews for the current hotel
+     * @param hotelId is the ID of the hotel
+     * @return the number of reviews
+     */
+    public int getNumReviewsForHotel(int hotelId) {
+        Connection dbConnection = dbHandler.getConnection();
+        if (dbConnection == null) {
+            System.out.println("Unable to connect to database.");
+            return 0;
+        }
+        try {
+            PreparedStatement statement = dbConnection.prepareStatement(PreparedStatements.GET_NUM_REVIEWS_BY_HOTEL_ID);
+            statement.setInt(1, hotelId);
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                return result.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getErrorCode());
+            System.out.println(e.getMessage());
+        }
+        return 0;
     }
 
     /**
@@ -194,7 +221,9 @@ public class ReviewDatabaseHandler {
             PreparedStatement statement = dbConnection.prepareStatement(PreparedStatements.DELETE_REVIEW_BY_REVIEW_ID);
             statement.setString(1, reviewId);
             statement.executeUpdate();
-            statement.close();
+            statement = dbConnection.prepareStatement(PreparedStatements.DELETE_DELETED_REVIEW_LIKES);
+            statement.setString(1, reviewId);
+            statement.executeUpdate();
             return true;
         } catch (SQLException e) {
             System.out.println(e.getErrorCode());
@@ -229,7 +258,8 @@ public class ReviewDatabaseHandler {
                         result.getString(5),
                         result.getString(6),
                         result.getTimestamp(7).toLocalDateTime(),
-                        result.getInt(8)
+                        result.getInt(8),
+                        false
                 );
             }
         } catch (SQLException e) {
@@ -265,6 +295,150 @@ public class ReviewDatabaseHandler {
         }
         return 0d;
 
+    }
+
+    /**
+     * Create a table to store liked reviews
+     */
+    public boolean createLikeReviewTable() {
+        Connection dbConnection = dbHandler.getConnection();
+        if (dbConnection == null) {
+            System.out.println("Unable to connect to database.");
+            return false;
+        }
+        try {
+            PreparedStatement statement = dbConnection.prepareStatement(PreparedStatements.CREATE_LIKE_REVIEW_TABLE);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            if (e.getErrorCode() == DatabaseErrorCodes.TABLE_EXISTS) {
+                System.out.println("Like Review table already exists.");
+            } else {
+                System.out.println(e.getMessage());
+                System.out.println("An error occurred.");
+            }
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * drop the like review table
+     */
+    public boolean dropLikeReviewTable() {
+        Connection dbConnection = dbHandler.getConnection();
+        if (dbConnection == null) {
+            System.out.println("Unable to connect to database.");
+            return false;
+        }
+
+        try {
+            PreparedStatement statement = dbConnection.prepareStatement(PreparedStatements.DROP_LIKE_REVIEW_TABLE);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            if (e.getErrorCode() == DatabaseErrorCodes.TABLE_EXISTS) {
+                System.out.println("Like Review table already exists.");
+            } else {
+                System.out.println(e.getMessage());
+                System.out.println("An error occurred.");
+            }
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Check if a user liked this review
+     * @param username is the username
+     * @param reviewId is the ID of the review
+     * @return true if yes
+     */
+    public boolean checkUserLikesReview(String username, String reviewId) {
+        Connection dbConnection = dbHandler.getConnection();
+        if (dbConnection == null) {
+            System.out.println("Unable to connect to database.");
+            return false;
+        }
+
+        try {
+            PreparedStatement statement = dbConnection.prepareStatement(PreparedStatements.CHECK_REVIEW_LIKED);
+            statement.setString(1, username);
+            statement.setString(2, reviewId);
+            ResultSet result = statement.executeQuery();
+            return result.next();
+        } catch (SQLException e) {
+            if (e.getErrorCode() == DatabaseErrorCodes.TABLE_DOES_NOT_EXIST) {
+                System.out.println("Table favorites does not exist.");
+            } else {
+                System.out.println(e.getMessage());
+                System.out.println("An error occurred.");
+            }
+            return false;
+        }
+    }
+
+    /**
+     * Add if a review is liked by the current user
+     * @param username is the user
+     * @param reviewId is the ID of the review
+     */
+    public void flipLike(String username, String reviewId) {
+        Connection dbConnection = dbHandler.getConnection();
+        if (dbConnection == null) {
+            System.out.println("Unable to connect to database.");
+            return;
+        }
+
+        try {
+            PreparedStatement statement;
+            if (checkUserLikesReview(username, reviewId)) {
+                statement = dbConnection.prepareStatement(PreparedStatements.DELETE_USER_LIKE);
+            } else {
+                statement = dbConnection.prepareStatement(PreparedStatements.ADD_USER_LIKE);
+            }
+            statement.setString(1, username);
+            statement.setString(2, reviewId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            if (e.getErrorCode() == DatabaseErrorCodes.TABLE_DOES_NOT_EXIST) {
+                System.out.println("Table favorites does not exist.");
+            } else {
+                System.out.println(e.getMessage());
+                System.out.println("An error occurred.");
+            }
+        }
+    }
+
+    /**
+     * Return the number of likes of a review
+     * @param reviewId is the ID of the review
+     * @return the number of likes
+     */
+    public int checkNumLikes(String reviewId) {
+        Connection dbConnection = dbHandler.getConnection();
+        if (dbConnection == null) {
+            System.out.println("Unable to connect to database.");
+            return 0;
+        }
+
+        try {
+            PreparedStatement statement = dbConnection.prepareStatement(PreparedStatements.CHECK_NUM_LIKES);
+            statement.setString(1, reviewId);
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                return result.getInt(1);
+            }
+
+        } catch (SQLException e) {
+            if (e.getErrorCode() == DatabaseErrorCodes.TABLE_DOES_NOT_EXIST) {
+                System.out.println("Table favorites does not exist.");
+            } else {
+                System.out.println("checkNumLikes");
+                System.out.println(e.getMessage());
+                System.out.println("An error occurred.");
+            }
+        }
+
+        return 0;
     }
 
     /**
@@ -344,8 +518,10 @@ public class ReviewDatabaseHandler {
 
     public static void main(String[] args) {
         ReviewDatabaseHandler reviewHandler = new ReviewDatabaseHandler();
-        reviewHandler.dropReviewAndRatingTable();
-        reviewHandler.createReviewAndRatingTable();
-        LoadReviews.loadReviewsToDB("input/reviews");
+//        reviewHandler.dropReviewAndRatingTable();
+//        reviewHandler.createReviewAndRatingTable();
+//        LoadReviews.loadReviewsToDB("input/reviews");
+        reviewHandler.dropLikeReviewTable();
+        reviewHandler.createLikeReviewTable();
     }
 }

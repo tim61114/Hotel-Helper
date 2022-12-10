@@ -2,6 +2,7 @@ package hotelapp.servlets.Home;
 
 import com.google.gson.JsonObject;
 import hotelapp.Database.HotelDatabaseHandler;
+import hotelapp.Model.Hotel;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -18,9 +19,10 @@ import java.util.List;
 
 public class HomeServlet extends HttpServlet {
 
-    private static final int HOTEL_PER_PAGE = 20;
+    private static final int HOTEL_PER_PAGE = 10;
     private final HotelDatabaseHandler hotelHandler = new HotelDatabaseHandler();
     private final List<String> hotelData = hotelHandler.getProcessedHotels("");
+    private final List<Hotel> hotels = hotelHandler.getHotels("");
     private final int TOTAL_HOTELS = hotelData.size();
     private final int PAGES = TOTAL_HOTELS / HOTEL_PER_PAGE;
 
@@ -31,10 +33,10 @@ public class HomeServlet extends HttpServlet {
         }
         HttpSession session = request.getSession();
 
-        List<String> hotelTable = paginationHandler(session);
+        List<Hotel> hotelTable = paginationHandler(session);
         List<String> pages = new ArrayList<>();
         for (int i = 1; i <= PAGES + 1; i++) {
-            pages.add("<a href=\"/home?page=" + i + "\">" + i + "</a>");
+            pages.add("/home?page=" + i);
         }
 
         PrintWriter out = response.getWriter();
@@ -43,9 +45,9 @@ public class HomeServlet extends HttpServlet {
 
         VelocityEngine v = (VelocityEngine) request.getServletContext().getAttribute("templateEngine");
         Template template = v.getTemplate("templates/home.html");
-        String username = ((JsonObject) session.getAttribute("loginInfo")).get("username").getAsString();
+        JsonObject loginInfo = (JsonObject) session.getAttribute("loginInfo");
 
-        VelocityContext context = contextHandler(username, hotelTable, pages);
+        VelocityContext context = contextHandler(session, loginInfo, hotelTable, pages);
         StringWriter writer = new StringWriter();
         template.merge(context, writer);
 
@@ -79,14 +81,14 @@ public class HomeServlet extends HttpServlet {
      * @param session to read the current page info
      * @return a formatted String HTML form
      */
-    private List<String> paginationHandler(HttpSession session) {
+    private List<Hotel> paginationHandler(HttpSession session) {
         String pageNumString = (String) session.getAttribute("page");
         int pageNum = 1;
         if (pageNumString != null) {
             pageNum = Integer.parseInt(pageNumString);
         }
 
-        return hotelData.stream()
+        return hotels.stream()
                 .skip((long) (pageNum - 1) * HOTEL_PER_PAGE)
                 .limit(HOTEL_PER_PAGE)
                 .toList();
@@ -94,14 +96,21 @@ public class HomeServlet extends HttpServlet {
 
     /**
      * Helper method to create a VelocityContext object
-     * @param username is the current username
+     * @param loginInfo is the current login info of the user
      * @param hotelTable is the paginated hotel data
      * @param pages is the row of pages
      * @return the VelocityContext to be merged
      */
-    private VelocityContext contextHandler(String username, List<String> hotelTable, List<String> pages) {
+    private VelocityContext contextHandler(HttpSession session, JsonObject loginInfo, List<Hotel> hotelTable, List<String> pages) {
+        String currentPage = (String) session.getAttribute("page");
+        currentPage = currentPage == null ? "1" : currentPage;
+        session.setAttribute("page", "1");
         VelocityContext context = new VelocityContext();
+        String username = loginInfo.get("username").getAsString();
+        String previousLogin = loginInfo.get("previousLogin").getAsString();
+        context.put("currentPage", Integer.parseInt(currentPage));
         context.put("username", username);
+        context.put("previousLogin", previousLogin.equals("null") ? null : previousLogin.replace('T', ' '));
         context.put("hotels", hotelTable);
         context.put("pages", pages);
         return context;

@@ -17,10 +17,12 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class HotelServlet extends HttpServlet {
 
+    private static final int REVIEWS_PER_PAGE = 10;
     private final HotelDatabaseHandler hotelHandler = new HotelDatabaseHandler();
     private final ReviewDatabaseHandler reviewHandler = new ReviewDatabaseHandler();
     @Override
@@ -42,20 +44,21 @@ public class HotelServlet extends HttpServlet {
         }
 
         String bookingStatus = (String) session.getAttribute("BookingStatus");
-
         session.setAttribute("currentHotel", hotelId);
 
         boolean ratingError = session.getAttribute("ratingError") != null;
         session.removeAttribute("ratingError");
 
         Review reviewToBeEdited = getReviewToBeEdited(session);
-
         Rating rating = reviewHandler.getRatingByHotelId(hotel.hotelId())
                 .orElse(new Rating(0, 0,0,0,0,0,0,0));
 
-        String username = ((JsonObject) session.getAttribute("loginInfo")).get("username").getAsString();
-        List<Review> reviews = reviewHandler.getProcessedReviewsByHotelId(hotel.hotelId());
-        List<String> parsedReviews = processReviews(reviews, username, reviewToBeEdited != null);
+        List<Review> reviews = paginationHandler(session);
+        int size = reviewHandler.getNumReviewsForHotel(hotel.hotelId());
+        List<String> pages = new ArrayList<>();
+        for (int i = 1; i <= (size - 1) / REVIEWS_PER_PAGE + 1; i++) {
+            pages.add(request.getRequestURL().append('?').append(request.getQueryString()).append("&page=").append(i).toString());
+        }
 
         double averageRating = reviewHandler.getAverageRatingByHotelId(hotel.hotelId());
 
@@ -64,7 +67,9 @@ public class HotelServlet extends HttpServlet {
         response.setStatus(HttpServletResponse.SC_OK);
 
         VelocityEngine v = (VelocityEngine) request.getServletContext().getAttribute("templateEngine");
-        VelocityContext context = contextHandler(hotel, averageRating, rating, parsedReviews, ratingError, reviewToBeEdited, bookingStatus);
+        String currentPage = (String) session.getAttribute("reviewPage");
+        session.setAttribute("reviewPage", "1");
+        VelocityContext context = contextHandler(hotel, averageRating, rating, ratingError, reviewToBeEdited, bookingStatus, reviews, pages, currentPage);
         session.removeAttribute("BookingStatus");
 
         Template template = v.getTemplate("templates/hotel.html");
@@ -95,7 +100,32 @@ public class HotelServlet extends HttpServlet {
             return true;
         }
 
+        String page = request.getParameter("page");
+        if (page != null) {
+            session.setAttribute("reviewPage", page);
+            response.sendRedirect(request.getRequestURL().append('?').append("hotelId=").append(hotelId).toString());
+            return true;
+        }
+
         return false;
+
+    }
+
+    /**
+     * Gets the Review for the current page.
+     * @param session is the session object storing data in the current session
+     * @return the list of reviews in the current page
+     */
+    private List<Review> paginationHandler(HttpSession session) {
+        String pageNumString = (String) session.getAttribute("reviewPage");
+        String username = ((JsonObject) session.getAttribute("loginInfo")).get("username").getAsString();
+        String hotelId = (String) session.getAttribute("currentHotel");
+        int pageNum = 1;
+        if (pageNumString != null) {
+            pageNum = Integer.parseInt(pageNumString);
+        }
+        return reviewHandler.getReviewsByHotelIdWithOffset(
+                Integer.parseInt(hotelId), username, REVIEWS_PER_PAGE, REVIEWS_PER_PAGE * (pageNum - 1));
     }
 
     /**
@@ -103,20 +133,22 @@ public class HotelServlet extends HttpServlet {
      * @param hotel is the Hotel data
      * @param averageRating is the average rating of the hotel
      * @param rating is the Rating object (Currently not used)
-     * @param reviews is the List of formatted reviews in HTML form
      * @param ratingError is a flag for sending ratingError messages
      * @param review is the Review to be edited if needed
      * @param bookingStatus is the bookingStatus of the current session
      * @return the VelocityContext to be merged
      */
-    private VelocityContext contextHandler(Hotel hotel, double averageRating, Rating rating, List<String> reviews,
-                                           boolean ratingError, Review review, String bookingStatus) {
+    private VelocityContext contextHandler(Hotel hotel, double averageRating, Rating rating, boolean ratingError,
+                                           Review review, String bookingStatus, List<Review> reviews, List<String> pages, String pageNum) {
         VelocityContext context = new VelocityContext();
         context.put("rating", rating);
         context.put("hotel", hotel);
-        context.put("reviews", reviews);
         context.put("avgRating", averageRating);
-        context.put("Expedia", "<a href=\"https://www.expedia.com/h" + hotel.hotelId() + ".Hotel-Information\" target=\"_blank\">Expedia</a>");
+        context.put("Expedia", "<a href=\"/expedia?hotelId=" + hotel.hotelId() +"\" target=\"_blank\">Expedia</a>");
+        context.put("reviews", reviews);
+        context.put("editMode", review != null);
+        context.put("pages", pages);
+        context.put("currentPage", pageNum == null ? 1 : Integer.parseInt(pageNum));
         if (ratingError) {
             context.put("RatingError", "Rating should be a number between 0 to 5");
         }
@@ -137,40 +169,6 @@ public class HotelServlet extends HttpServlet {
         }
 
         return context;
-    }
-
-    /**
-     * Helper method to parse reviews into HTML form including edit and delete button for current user
-     * @param reviews is the list of reviews of the current hotel
-     * @param currentUser is the current user
-     * @param edit is if the session is in edit mode or not
-     * @return a List of String in HTML form format
-     */
-    private List<String> processReviews(List<Review> reviews, String currentUser, boolean edit) {
-        return reviews.stream()
-                .map(
-                review -> {
-                    String res;
-                    res = "<tr>" +
-                            "<td>" + review.title() + "</td>" +
-                            "<td> Time submitted: " + review.reviewDate().toString().replaceAll("T", " ") + "</td>" +
-                            "<td>Rating: " + review.rating() + "/5</td>" +
-                            "<td>" + review.username() + "</td>" +
-                            "</tr>" +
-                            "<tr>" +
-                            "<td colspan=\"2\">" + review.reviewText() + "</td>";
-                    if (!edit && review.username().equals(currentUser)) {
-                        res +=  "<td><form method=\"post\" action=\"/edit?reviewId=" + review.reviewId() + "\">" +
-                                "<input type=\"submit\" value=\"Edit\">" +
-                                "</form></td>" +
-                                "<td><form method=\"post\" action=\"/delete?reviewId="+ review.reviewId() + "\">" +
-                                "<input type=\"submit\" value=\"Delete\">";
-                    }
-                    res += "</tr>";
-                    return res;
-                }
-        )
-                .toList();
     }
 
     /**

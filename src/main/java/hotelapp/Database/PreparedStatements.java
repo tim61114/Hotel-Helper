@@ -26,6 +26,21 @@ public class PreparedStatements {
             "SELECT username FROM users " +
                     "WHERE username LIKE binary ? AND password = ?";
 
+    public static final String CREATE_LOGIN_INFO_TABLE =
+            "CREATE TABLE login_info (" +
+                    "username VARCHAR(32) PRIMARY KEY, " +
+                    "previous_login TIMESTAMP NOT NULL) ";
+
+    public static final String DROP_LOGIN_INFO_TABLE =
+            "DROP TABLE login_info";
+
+    public static final String GET_PREVIOUS_LOGIN_BY_USERNAME =
+            "SELECT previous_login FROM login_info WHERE username = ?";
+
+    public static final String INSERT_TO_LOGIN_INFO =
+            "INSERT INTO login_info (username, previous_login) " +
+                    "VALUES(?, ?) ON DUPLICATE KEY UPDATE previous_login=?";
+
     public static final String CREATE_HOTEL_TABLE =
             "CREATE TABLE hotels (" +
                     "id INTEGER AUTO_INCREMENT PRIMARY KEY, " +
@@ -58,6 +73,28 @@ public class PreparedStatements {
     public static final String GET_ALL_HOTEL_ID =
             "SELECT hotel_id FROM hotels;";
 
+    public static final String CREATE_EXPEDIA_HISTORY_TABLE =
+            "CREATE TABLE expedia_history (" +
+                    "username VARCHAR(20) NOT NULL, " +
+                    "hotel_id INTEGER NOT NULL, " +
+                    "time TIMESTAMP, " +
+                    "PRIMARY KEY(username, hotel_id));";
+
+    public static final String DROP_EXPEDIA_HISTORY_TABLE =
+            "DROP TABLE expedia_history;";
+
+    public static final String GET_USER_EXPEDIA_HISTORY =
+            "SELECT hotel_name, hotels.hotel_id, time FROM " +
+                    "(SELECT * FROM expedia_history WHERE username = ?) a " +
+                    "INNER JOIN hotels on a.hotel_id = hotels.hotel_id ORDER BY time DESC";
+
+    public static final String DELETE_USER_EXPEDIA_HISTORY =
+            "DELETE FROM expedia_history WHERE username = ?";
+
+    public static final String ADD_USER_EXPEDIA_HISTORY =
+            "INSERT INTO expedia_history (username, hotel_id, time) " +
+                    "VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE time=?;";
+
     public static final String CREATE_REVIEW_TABLE =
             "CREATE TABLE reviews (" +
                     "id INTEGER AUTO_INCREMENT PRIMARY KEY, " +
@@ -79,8 +116,11 @@ public class PreparedStatements {
     public static final String DELETE_REVIEW_BY_REVIEW_ID =
             "DELETE FROM reviews WHERE review_id = ?";
 
-    public static final String GET_REVIEW_BY_HOTEL_ID =
-            "SELECT * FROM reviews WHERE hotel_id = ? ORDER BY reviewDate DESC;";
+    public static final String GET_NUM_REVIEWS_BY_HOTEL_ID =
+            "SELECT COUNT(*) FROM reviews WHERE hotel_id = ?;";
+
+    public static final String GET_REVIEW_BY_HOTEL_ID_WITH_OFFSET =
+            "SELECT * FROM reviews WHERE hotel_id = ? ORDER BY reviewDate DESC LIMIT ? OFFSET ? ";
 
     public static final String GET_REVIEW_BY_REVIEW_ID =
             "SELECT * FROM reviews WHERE review_id = ?;";
@@ -129,16 +169,65 @@ public class PreparedStatements {
                     "VALUES(?, ?, ?, ?, ?, ?, ?)";
 
     public static final String GET_ALL_BOOKING =
-            "SELECT * FROM bookings;";
+            "SELECT hotel_name, a.* FROM hotels INNER JOIN (SELECT * FROM bookings) a on a.hotel_id = hotels.hotel_id";
 
     public static final String GET_USER_BOOKING =
-            "SELECT * FROM bookings WHERE username = ? ORDER BY startDate ASC";
+            "SELECT hotel_name, a.* FROM hotels INNER JOIN (SELECT * FROM bookings WHERE username = ?) a on a.hotel_id = hotels.hotel_id ORDER BY startDate ASC";
 
     public static final String GET_BOOKING_BY_BOOKING_ID =
-            "SELECT * FROM bookings WHERE booking_id = ?";
+            "SELECT hotel_name, a.* FROM hotels INNER JOIN (SELECT * FROM bookings WHERE booking_id = ?) a ON a.hotel_id = hotels.hotel_id";
 
     public static final String DELETE_BOOKING =
             "DELETE FROM bookings WHERE booking_id = ?";
 
 
+    public static final String CREATE_FAVORITES_TABLE =
+            "CREATE TABLE favorites (" +
+                    "id INTEGER AUTO_INCREMENT PRIMARY KEY, " +
+                    "hotel_id INTEGER NOT NULL, " +
+                    "username VARCHAR(20) NOT NULL)";
+
+    public static final String ADD_FAVORITE =
+            "INSERT INTO favorites (hotel_id, username) " +
+                    "VALUES(?, ?)";
+
+    public static final String DELETE_USER_FAVORITE =
+            "DELETE FROM favorites WHERE username = ?";
+
+    public static final String DELETE_FAVORITE =
+            "DELETE FROM favorites WHERE hotel_id = ? AND username = ?";
+
+    public static final String DROP_FAVORITES_TABLE =
+            "DROP TABLE favorites";
+
+    public static final String CHECK_IS_FAVORITE_HOTEL =
+            "SELECT * FROM favorites WHERE hotel_id = ? AND username = ?";
+
+    public static final String GET_USER_FAVORITES =
+            "SELECT hotels.* FROM hotels INNER JOIN (SELECT * FROM favorites WHERE username = ?) a ON a.hotel_id = hotels.hotel_id";
+
+    public static final String CREATE_LIKE_REVIEW_TABLE =
+            "CREATE TABLE liked_reviews (" +
+                    "id INTEGER AUTO_INCREMENT PRIMARY KEY, " +
+                    "username VARCHAR(20) NOT NULL, " +
+                    "review_id VARCHAR(32) NOT NULL)";
+
+    public static final String DROP_LIKE_REVIEW_TABLE =
+            "DROP TABLE liked_reviews";
+
+    public static final String CHECK_REVIEW_LIKED =
+            "SELECT * FROM liked_reviews WHERE username = ? AND review_id = ?";
+
+    public static final String ADD_USER_LIKE =
+            "INSERT INTO liked_reviews (username, review_id) " +
+                    "VALUES(?, ?)";
+
+    public static final String DELETE_USER_LIKE =
+            "DELETE FROM liked_reviews WHERE username = ? AND review_id = ?";
+
+    public static final String CHECK_NUM_LIKES =
+            "SELECT COUNT(*) FROM liked_reviews WHERE review_id = ?";
+
+    public static final String DELETE_DELETED_REVIEW_LIKES =
+            "DELETE FROM liked_reviews WHERE review_id = ?";
 }

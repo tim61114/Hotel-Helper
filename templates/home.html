@@ -3,44 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-</head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"></head>
 <body>
-<h3>Hello, $username</h3>
 
-<form method="post" action="/logout">
-    <input type="submit" value="Logout">
-</form>
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/home">Home</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mynavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mynavbar">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/booking">My Bookings</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/expedia_history">Expedia History</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/favorites">My Favorite Hotels</a>
+                </li>
+            </ul>
+            <form class="d-inline-flex p-2" method="post" action="/search">
+                <input class="form-control me-2" type="text" placeholder="Search for Hotels" name="searchColumn">
+                <button class="btn btn-primary" type="submit">Search</button>
+            </form>
+            <form class="d-inline-flex p-2" method="post" action="/logout">
+                <button class="btn btn-dark" type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
+</nav>
 
-<a href="/booking">Manage your bookings</a>
+<div class="container p-3 my-1">
+    #if($!previousLogin)
+    <h4>Welcome back, $username! Your previous login was at $previousLogin.</h4>
+    #else
+    <h4>Hello, $username</h4>
+    #end
+    <h3>Hotels</h3>
 
-<p>Search Hotels</p>
-<form method="post" action="/search">
-    <label>
-        <input type="text" name="searchColumn">
-    </label>
-    <label>
-        <input type="submit" value="Search">
-    </label>
+    #foreach($hotel in $hotels)
+    <div class="card">
+        <div class="card-body">
+            <a href=/hotel?hotelId=$hotel.hotelId() class="card-title">$hotel.name()</a>
+            <h6 class="card-subtitle mb-2 text-muted">$hotel.addr(), $hotel.city(), $hotel.state()</h6>
+        </div>
+    </div>
+    #end
+</div>
 
-</form>
 
-<p>Hotels</p>
-<table>
-    <tr>
-        <td>Hotel</td>
-        <td>Address</td>
-        <td>City</td>
-        <td>State</td>
-        <td>Country</td>
-    </tr>
-#foreach($hotel in $hotels)
-    $hotel
-#end
-</table>
-#foreach($pagelink in $pages)
-    $pagelink
-#end
-
-</body>
+<ul class="pagination justify-content-center">
+    #foreach($pagelink in $pages)
+<!--    <p>$pagelink</p>-->
+        #if($velocityCount == $currentPage)
+        <li class="page-item active"><a class="page-link" href=$pagelink>$velocityCount</a></li>
+        #else
+        <li class="page-item"><a class="page-link" href=$pagelink>$velocityCount</a></li>
+        #end
+    #end
+</ul>
+<br>
+<footer class="blockquote-footer">This website is powered by Tim's blood, sweat and tears.</footer></body>
 </html>

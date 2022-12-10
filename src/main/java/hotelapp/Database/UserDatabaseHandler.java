@@ -4,6 +4,7 @@ import javax.xml.crypto.Data;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Random;
 
@@ -130,6 +131,92 @@ public class UserDatabaseHandler {
         return false;
     }
 
+    public boolean createLoginInfoTable() {
+        Connection dbConnection = dbHandler.getConnection();
+        if (dbConnection == null) {
+            System.out.println("Unable to connect to database.");
+            return false;
+        }
+        try {
+            Statement statement = dbConnection.createStatement();
+            statement.executeUpdate(PreparedStatements.CREATE_LOGIN_INFO_TABLE);
+        } catch (SQLException e) {
+            if (e.getErrorCode() == DatabaseErrorCodes.TABLE_EXISTS) {
+                System.out.println("Login_info table already exists.");
+            } else {
+                System.out.println("An error occurred.");
+            }
+            return false;
+        }
+        return true;
+    }
+
+    public boolean dropLoginInfoTable() {
+        Connection dbConnection = dbHandler.getConnection();
+        if (dbConnection == null) {
+            System.out.println("Unable to connect to database.");
+            return false;
+        }
+        try {
+            Statement statement = dbConnection.createStatement();
+            statement.executeUpdate(PreparedStatements.DROP_LOGIN_INFO_TABLE);
+        } catch (SQLException e) {
+            if (e.getErrorCode() == DatabaseErrorCodes.TABLE_DOES_NOT_EXIST) {
+                System.out.println("Table login_info does not exist. Aborted.");
+            } else {
+                System.out.println("An error occurred.");
+            }
+            return false;
+        }
+        return true;
+    }
+
+    public LocalDateTime getPreviousLogin(String username) {
+        Connection dbConnection = dbHandler.getConnection();
+        if (dbConnection == null) {
+            System.out.println("Unable to connect to database.");
+            return null;
+        }
+
+        try {
+            PreparedStatement statement = dbConnection.prepareStatement(PreparedStatements.GET_PREVIOUS_LOGIN_BY_USERNAME);
+            statement.setString(1, username);
+            ResultSet results = statement.executeQuery();
+            if (results.next()) {
+                return results.getTimestamp(1).toLocalDateTime();
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getErrorCode());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * Update the previous login time of the current user
+     * @param username is the current user
+     * @param time is the login time
+     */
+    public void updatePreviousLogin(String username, LocalDateTime time) {
+        Connection dbConnection = dbHandler.getConnection();
+        if (dbConnection == null) {
+            System.out.println("Unable to connect to database.");
+            return;
+        }
+
+        try {
+            PreparedStatement statement = dbConnection.prepareStatement(PreparedStatements.INSERT_TO_LOGIN_INFO);
+            statement.setString(1, username);
+            statement.setTimestamp(2, Timestamp.valueOf(time));
+            statement.setTimestamp(3, Timestamp.valueOf(time));
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getErrorCode());
+            System.out.println("An error occurred.");
+        }
+    }
+
     /**
      * Get the salt string of a user
      * @param connection is a database connection
@@ -185,8 +272,9 @@ public class UserDatabaseHandler {
         UserDatabaseHandler userDB = new UserDatabaseHandler();
         //System.out.println(userDB.dropUserTable());
         //System.out.println(userDB.createUserTable());
-        System.out.println(userDB.registerUser("testuser", "test"));
-        System.out.println(userDB.authenticateUser("testuser", "test"));
-        System.out.println(userDB.authenticateUser("test", "testtest"));
+//        System.out.println(userDB.authenticateUser("test", "testtest"));
+//        System.out.println(userDB.registerUser("testuser", "test"));
+//        System.out.println(userDB.authenticateUser("testuser", "test"));
+        userDB.createLoginInfoTable();
     }
 }
