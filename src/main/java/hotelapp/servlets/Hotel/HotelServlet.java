@@ -53,14 +53,12 @@ public class HotelServlet extends HttpServlet {
         Rating rating = reviewHandler.getRatingByHotelId(hotel.hotelId())
                 .orElse(new Rating(0, 0,0,0,0,0,0,0));
 
-        String username = ((JsonObject) session.getAttribute("loginInfo")).get("username").getAsString();
-        List<Review> allReviews = reviewHandler.getProcessedReviewsByHotelId(hotel.hotelId(), username);
-        List<Review> reviews = paginationHandler(session, allReviews);
+        List<Review> reviews = paginationHandler(session);
+        int size = reviewHandler.getNumReviewsForHotel(hotel.hotelId());
         List<String> pages = new ArrayList<>();
-        for (int i = 1; i <= (allReviews.size() - 1) / REVIEWS_PER_PAGE + 1; i++) {
+        for (int i = 1; i <= (size - 1) / REVIEWS_PER_PAGE + 1; i++) {
             pages.add(request.getRequestURL().append('?').append(request.getQueryString()).append("&page=").append(i).toString());
         }
-        //List<String> parsedReviews = processReviews(reviews, username, reviewToBeEdited != null);
 
         double averageRating = reviewHandler.getAverageRatingByHotelId(hotel.hotelId());
 
@@ -69,7 +67,6 @@ public class HotelServlet extends HttpServlet {
         response.setStatus(HttpServletResponse.SC_OK);
 
         VelocityEngine v = (VelocityEngine) request.getServletContext().getAttribute("templateEngine");
-        //VelocityContext context = contextHandler(hotel, averageRating, rating, parsedReviews, ratingError, reviewToBeEdited, bookingStatus, reviews);
         String currentPage = (String) session.getAttribute("reviewPage");
         session.setAttribute("reviewPage", "1");
         VelocityContext context = contextHandler(hotel, averageRating, rating, ratingError, reviewToBeEdited, bookingStatus, reviews, pages, currentPage);
@@ -114,17 +111,21 @@ public class HotelServlet extends HttpServlet {
 
     }
 
-    private List<Review> paginationHandler(HttpSession session, List<Review> reviews) {
+    /**
+     * Gets the Review for the current page.
+     * @param session is the session object storing data in the current session
+     * @return the list of reviews in the current page
+     */
+    private List<Review> paginationHandler(HttpSession session) {
         String pageNumString = (String) session.getAttribute("reviewPage");
+        String username = ((JsonObject) session.getAttribute("loginInfo")).get("username").getAsString();
+        String hotelId = (String) session.getAttribute("currentHotel");
         int pageNum = 1;
         if (pageNumString != null) {
             pageNum = Integer.parseInt(pageNumString);
         }
-
-        return reviews.stream()
-                .skip((long) (pageNum -  1) * REVIEWS_PER_PAGE)
-                .limit(REVIEWS_PER_PAGE)
-                .toList();
+        return reviewHandler.getReviewsByHotelIdWithOffset(
+                Integer.parseInt(hotelId), username, REVIEWS_PER_PAGE, REVIEWS_PER_PAGE * (pageNum - 1));
     }
 
     /**
@@ -169,40 +170,6 @@ public class HotelServlet extends HttpServlet {
         }
 
         return context;
-    }
-
-    /**
-     * Helper method to parse reviews into HTML form including edit and delete button for current user
-     * @param reviews is the list of reviews of the current hotel
-     * @param currentUser is the current user
-     * @param edit is if the session is in edit mode or not
-     * @return a List of String in HTML form format
-     */
-    private List<String> processReviews(List<Review> reviews, String currentUser, boolean edit) {
-        return reviews.stream()
-                .map(
-                review -> {
-                    String res;
-                    res = "<tr>" +
-                            "<td>" + review.title() + "</td>" +
-                            "<td> Time submitted: " + review.reviewDate().toString().replaceAll("T", " ") + "</td>" +
-                            "<td>Rating: " + review.rating() + "/5</td>" +
-                            "<td>" + review.username() + "</td>" +
-                            "</tr>" +
-                            "<tr>" +
-                            "<td colspan=\"2\">" + review.reviewText() + "</td>";
-                    if (!edit && review.username().equals(currentUser)) {
-                        res +=  "<td><form method=\"post\" action=\"/edit?reviewId=" + review.reviewId() + "\">" +
-                                "<input type=\"submit\" value=\"Edit\">" +
-                                "</form></td>" +
-                                "<td><form method=\"post\" action=\"/delete?reviewId="+ review.reviewId() + "\">" +
-                                "<input type=\"submit\" value=\"Delete\">";
-                    }
-                    res += "</tr>";
-                    return res;
-                }
-        )
-                .toList();
     }
 
     /**

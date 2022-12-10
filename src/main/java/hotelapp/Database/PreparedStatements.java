@@ -75,10 +75,10 @@ public class PreparedStatements {
 
     public static final String CREATE_EXPEDIA_HISTORY_TABLE =
             "CREATE TABLE expedia_history (" +
-                    "id INTEGER AUTO_INCREMENT PRIMARY KEY, " +
                     "username VARCHAR(20) NOT NULL, " +
                     "hotel_id INTEGER NOT NULL, " +
-                    "time TIMESTAMP);";
+                    "time TIMESTAMP, " +
+                    "PRIMARY KEY(username, hotel_id));";
 
     public static final String DROP_EXPEDIA_HISTORY_TABLE =
             "DROP TABLE expedia_history;";
@@ -93,7 +93,7 @@ public class PreparedStatements {
 
     public static final String ADD_USER_EXPEDIA_HISTORY =
             "INSERT INTO expedia_history (username, hotel_id, time) " +
-                    "VALUES (?, ?, ?);";
+                    "VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE time=?;";
 
     public static final String CREATE_REVIEW_TABLE =
             "CREATE TABLE reviews (" +
@@ -116,8 +116,11 @@ public class PreparedStatements {
     public static final String DELETE_REVIEW_BY_REVIEW_ID =
             "DELETE FROM reviews WHERE review_id = ?";
 
-    public static final String GET_REVIEW_BY_HOTEL_ID =
-            "SELECT * FROM reviews WHERE hotel_id = ? ORDER BY reviewDate DESC;";
+    public static final String GET_NUM_REVIEWS_BY_HOTEL_ID =
+            "SELECT COUNT(*) FROM reviews WHERE hotel_id = ?;";
+
+    public static final String GET_REVIEW_BY_HOTEL_ID_WITH_OFFSET =
+            "SELECT * FROM reviews WHERE hotel_id = ? ORDER BY reviewDate DESC LIMIT ? OFFSET ? ";
 
     public static final String GET_REVIEW_BY_REVIEW_ID =
             "SELECT * FROM reviews WHERE review_id = ?;";
@@ -224,4 +227,7 @@ public class PreparedStatements {
 
     public static final String CHECK_NUM_LIKES =
             "SELECT COUNT(*) FROM liked_reviews WHERE review_id = ?";
+
+    public static final String DELETE_DELETED_REVIEW_LIKES =
+            "DELETE FROM liked_reviews WHERE review_id = ?";
 }

@@ -1,6 +1,5 @@
 package hotelapp.Database;
 
-import hotelapp.Database.LoadData.LoadReviews;
 import hotelapp.Model.Rating;
 import hotelapp.Model.Review;
 
@@ -68,7 +67,7 @@ public class ReviewDatabaseHandler {
      * @param hotelId is the target hotel ID
      * @return a list of Reviews
      */
-    public List<Review> getProcessedReviewsByHotelId(int hotelId, String username) {
+    public List<Review> getReviewsByHotelIdWithOffset(int hotelId, String username, int limit, int offset) {
         Connection dbConnection = dbHandler.getConnection();
         if (dbConnection == null) {
             System.out.println("Unable to connect to database.");
@@ -78,8 +77,10 @@ public class ReviewDatabaseHandler {
         List<Review> queryResult = new ArrayList<>();
         try {
             PreparedStatement statement;
-            statement = dbConnection.prepareStatement(PreparedStatements.GET_REVIEW_BY_HOTEL_ID);
+            statement = dbConnection.prepareStatement(PreparedStatements.GET_REVIEW_BY_HOTEL_ID_WITH_OFFSET);
             statement.setInt(1, hotelId);
+            statement.setInt(2, limit);
+            statement.setInt(3, offset);
 
             ResultSet result = statement.executeQuery();
             while (result.next()) {
@@ -140,6 +141,26 @@ public class ReviewDatabaseHandler {
         return Optional.empty();
     }
 
+    public int getNumReviewsForHotel(int hotelId) {
+        Connection dbConnection = dbHandler.getConnection();
+        if (dbConnection == null) {
+            System.out.println("Unable to connect to database.");
+            return 0;
+        }
+        try {
+            PreparedStatement statement = dbConnection.prepareStatement(PreparedStatements.GET_NUM_REVIEWS_BY_HOTEL_ID);
+            statement.setInt(1, hotelId);
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                return result.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getErrorCode());
+            System.out.println(e.getMessage());
+        }
+        return 0;
+    }
+
     /**
      * Add a Review to the database
      * @param hotelId is the target hotel ID
@@ -195,7 +216,9 @@ public class ReviewDatabaseHandler {
             PreparedStatement statement = dbConnection.prepareStatement(PreparedStatements.DELETE_REVIEW_BY_REVIEW_ID);
             statement.setString(1, reviewId);
             statement.executeUpdate();
-            statement.close();
+            statement = dbConnection.prepareStatement(PreparedStatements.DELETE_DELETED_REVIEW_LIKES);
+            statement.setString(1, reviewId);
+            statement.executeUpdate();
             return true;
         } catch (SQLException e) {
             System.out.println(e.getErrorCode());

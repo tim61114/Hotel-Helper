@@ -331,6 +331,7 @@ public class HotelDatabaseHandler {
             statement.setString(1, username);
             statement.setInt(2, hotelId);
             statement.setTimestamp(3, Timestamp.valueOf(time));
+            statement.setTimestamp(4, Timestamp.valueOf(time));
             statement.executeUpdate();
 
         } catch (SQLException e) {
